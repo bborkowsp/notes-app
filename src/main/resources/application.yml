@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/notes-app
+    username: notes-app
+    password: WyEBcUPh
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
