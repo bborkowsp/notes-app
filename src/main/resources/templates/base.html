@@ -9,6 +9,7 @@
             rel="stylesheet"
             integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao@Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
             crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
@@ -27,8 +28,8 @@
                 </li>
             </ul>
             <form class="d-flex">
-                <a class="btn btn-light" href="/login">Login</a>
-                <a class="btn btn-light ms-2" href="/signup">Signup</a>
+                <a class="btn btn-light" th:href="@{/login}">Login</a>
+                <a class="btn btn-light ms-2" th:href="@{/signup}">Signup</a>
             </form>
         </div>
     </div>
