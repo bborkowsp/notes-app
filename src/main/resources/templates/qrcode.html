@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+<head>
+    <meta charset="UTF-8">
+    <title>QrCode page</title>
+</head>
+<body>
+<section>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 text-center">
+                <h1>Your QR Code</h1>
+                <img th:src="'data:image/png;base64,' + ${imageBase64}" alt="QR Code" class="mx-auto d-block">
+                <p>Scan the QR code using your authenticator app.</p>
+                <p>Username: <span th:text="${username}"></span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
