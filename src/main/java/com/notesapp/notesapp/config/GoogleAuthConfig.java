@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class CustomGoogleAuthenticatorConfig {
+public class GoogleAuthConfig {
+    
     private final CredentialRepository credentialRepository;
 
     @Bean

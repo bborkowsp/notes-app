@@ -13,7 +13,7 @@ public class UserMapperService implements UserMapper {
     @Override
     public User mapUserDtoToUser(UserDto userDto) {
         return User.builder()
-                .userName(userDto.userName())
+                .username(userDto.username())
                 .email(userDto.email())
                 .password(userDto.password())
                 .build();

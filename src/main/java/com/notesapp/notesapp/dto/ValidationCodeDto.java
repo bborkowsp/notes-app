@@ -10,5 +10,4 @@ import lombok.NoArgsConstructor;
 public class ValidationCodeDto {
     private Integer code;
     private String username;
-
 }

@@ -16,7 +16,7 @@
                             <div th:if="${param.error}" class="alert alert-danger"> Invalid username & Password</div>
                             <div th:if="${param.logout}" class="alert alert-success"> Logout Sucessfully</div>
                             <div class="form-group">
-                                <label>Email</label>
+                                <label>Username</label>
                                 <input type="text" id="username" name="username" class="form-control" required
                                        autofocus>
                             </div>
@@ -25,12 +25,13 @@
                                 <input type="password" id="password" name="password" class="form-control" required>
                             </div>
                             <div class="form-group mt-2">
-                                <label>TOTP</label>
-                                <input type="password" id="totp" name="totp" class="form-control" required>
+                                <label>Google verification code</label>
+                                <input type="password" id="verificationCode" name="verificationCode"
+                                       class="form-control" required>
                             </div>
                             <button class="btn btn-primary col-md-12 mt-3" type="submit">Sign in</button>
                             <div class="text-center mt-2">
-                                <a href="/signup">Create Account</a>
+                                <a href="/register">Create Account</a>
                             </div>
                         </form>
                     </div>

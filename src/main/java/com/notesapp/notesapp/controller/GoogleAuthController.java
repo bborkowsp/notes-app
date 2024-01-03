@@ -26,7 +26,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class GoogleAuthenticatorController {
+public class GoogleAuthController {
 
     private final GoogleAuthenticator googleAuthenticator;
     private final CredentialRepository credentialRepository;
@@ -37,14 +37,13 @@ public class GoogleAuthenticatorController {
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
-        String otpAuthURL = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("my-demo", username, key);
+        final var otpAuthTotpURL = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("notes-app", username, key);
 
-        BitMatrix bitMatrix = qrCodeWriter.encode(otpAuthURL, BarcodeFormat.QR_CODE, 200, 200);
+        BitMatrix bitMatrix = qrCodeWriter.encode(otpAuthTotpURL, BarcodeFormat.QR_CODE, 200, 200);
 
-        // Convert the BitMatrix to a Base64-encoded image
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", baos);
-        byte[] bytes = baos.toByteArray();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", byteArrayOutputStream);
+        byte[] bytes = byteArrayOutputStream.toByteArray();
         String imageBase64 = Base64.encodeBase64String(bytes);
 
         model.addAttribute("imageBase64", imageBase64);
@@ -53,10 +52,10 @@ public class GoogleAuthenticatorController {
         return "qrcode";
     }
 
-    @PostMapping("/validate/key")
-    public Validation validateKey(@RequestBody ValidationCodeDto body) {
-        return new Validation(googleAuthenticator.authorizeUser(body.getUsername(), body.getCode()));
-    }
+//    @PostMapping("/validate/key")
+//    public Validation validateKey(@RequestBody ValidationCodeDto body) {
+//        return new Validation(googleAuthenticator.authorizeUser(body.getUsername(), body.getCode()));
+//    }
 
     @GetMapping("/scratches/{username}")
     public List<Integer> getScratches(@PathVariable String username) {
