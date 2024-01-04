@@ -1,88 +1,60 @@
 package com.notesapp.notesapp.config;
 
+import com.notesapp.notesapp.service.GoogleAuthUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CorsConfigurationSource corsConfigurationSource;
-    private final PasswordEncoder passwordEncoder;
+    private final CustomAuthenticationProvider customAuthenticationProvider;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final GoogleAuthUseCases googleAuthUseCases;
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//        httpSecurity
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource))
-//                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .authorizeRequests(authorizeRequests ->
-//                        authorizeRequests
-//                                .requestMatchers("/css/**").permitAll()
-//                                .requestMatchers("/register").permitAll()
-//                                .requestMatchers("/qrcode/{username}").permitAll()
-//                                .anyRequest().authenticated()
-//                )
-//                .formLogin(form ->
-//                        form.loginPage("/login")
-//                                .loginProcessingUrl("/login")
-//                                .defaultSuccessUrl("/{username}/notes")
-//                                .permitAll()
-//                )
-//                .logout(logout ->
-//                        logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                                .permitAll()
-//                )
-//                .authenticationProvider(authenticationProvider())
-//                .httpBasic(AbstractHttpConfigurer::disable);
-//
-//        return httpSecurity.build();
-//    }
 
     @Bean
-    public SecurityFilterChain filterSecurity(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests(authorizeRequests ->
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/css/**").permitAll()
-                                .requestMatchers("/register").permitAll()
-                                .requestMatchers("/qrcode/{username}").permitAll()
+                                .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .formLogin(form ->
                         form.loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .successHandler((request, response, authentication) -> {
-                                    String targetUrl = "/user/" + authentication.getName() + "/notes";
-                                    new DefaultRedirectStrategy().sendRedirect(request, response, targetUrl);
-                                })
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+                                .defaultSuccessUrl("/user/{username}/notes", true)
+                                .failureUrl("/login?error=true")
                                 .permitAll()
                 )
-                .logout(logout ->
-                        logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .permitAll()
-                );
-        return http.build();
+                .authenticationProvider(authenticationProvider())
+                .build();
     }
 
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
+        return authenticationManagerBuilder.build();
+    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        final var authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        return authenticationProvider;
+        return new CustomAuthenticationProvider(userDetailsService, passwordEncoder, googleAuthUseCases);
     }
 }
-

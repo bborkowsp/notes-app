@@ -1,6 +1,5 @@
 package com.notesapp.notesapp.repository;
 
-import com.notesapp.notesapp.model.UserTOTP;
 import com.notesapp.notesapp.model.UserTOTPCredentials;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +37,5 @@ public class CredentialRepository implements ICredentialRepository {
                 .scratchCodes(scratchCodes)
                 .build();
     }
-//    private final Map<String, UserTOTP> usersKeys = new HashMap<String, UserTOTP>() {{
-//        put("kek@kek.com", null);
-//        put("alice@gmail.com", null);
-//    }};
 
-
-    public UserTOTP getUser(String username) {
-        //   return usersKeys.get(username);
-        throw new IllegalArgumentException("Not implemented");
-    }
 }

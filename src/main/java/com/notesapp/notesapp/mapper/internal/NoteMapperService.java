@@ -6,8 +6,8 @@ import com.notesapp.notesapp.model.Note;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NoteMapperService implements NoteMapper {
-    
+class NoteMapperService implements NoteMapper {
+
     @Override
     public NoteDto mapNoteToNoteDto(Note note) {
         return NoteDto.builder()

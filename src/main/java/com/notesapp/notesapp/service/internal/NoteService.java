@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class NoteService implements NoteUseCases {
+class NoteService implements NoteUseCases {
 
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;

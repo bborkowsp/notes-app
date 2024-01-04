@@ -20,7 +20,7 @@ public class NoteController {
         final var notes = noteUseCases.getAllNotes();
         model.addAttribute("notes", notes);
         model.addAttribute("username", username);
-        return "user/notes";
+        return "/user/notes";
     }
 }
 

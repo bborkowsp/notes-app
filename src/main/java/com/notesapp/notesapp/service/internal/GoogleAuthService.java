@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GoogleAuthService implements GoogleAuthUseCases {
+class GoogleAuthService implements GoogleAuthUseCases {
 
     private final GoogleAuthenticator googleAuthenticator;
 
