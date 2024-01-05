@@ -45,7 +45,7 @@ public class AuthService implements AuthUseCases, UserDetailsService {
             throw new IllegalStateException("Verification code does not match");
         }
     }
-    
+
     private void checkIfUserAlreadyExists(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalStateException("User already exists");
@@ -57,6 +57,5 @@ public class AuthService implements AuthUseCases, UserDetailsService {
             throw new IllegalStateException("Email already exists");
         }
     }
-
 
 }

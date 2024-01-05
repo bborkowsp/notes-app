@@ -1,10 +1,10 @@
 package com.notesapp.notesapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 
 @Builder
 @Jacksonized

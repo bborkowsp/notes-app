@@ -1,12 +1,28 @@
 package com.notesapp.notesapp.dto;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import com.notesapp.notesapp.validation.ValidConfirmationPassword;
+import com.notesapp.notesapp.validation.ValidEmail;
+import com.notesapp.notesapp.validation.ValidPassword;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import lombok.extern.jackson.Jacksonized;
 
+
+@Builder
+@Jacksonized
+@ValidConfirmationPassword
 public record RegisterUserDto(
-        @NotBlank @Size(max = 30) String username,
-        @NotBlank @Size(max = 255) String email,
-        @NotBlank @Size(max = 120) String password
-) {
+        @NotBlank
+        @Size(min = 5, message = "Username is too short!")
+        @Size(max = 30, message = "Username is too long!")
+        String username,
 
+        @Email @ValidEmail @NotBlank @Size(max = 255) String email,
+
+        @NotBlank @ValidPassword String password,
+
+        @NotBlank @Size(min = 1, max = 120) String matchingPassword
+) {
 }
