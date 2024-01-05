@@ -1,13 +1,15 @@
 package com.notesapp.notesapp.config;
 
-import com.notesapp.notesapp.service.GoogleAuthUseCases;
+import com.notesapp.notesapp.repository.UserRepository;
+import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,46 +17,46 @@ import org.springframework.security.web.SecurityFilterChain;
 
 
 @Configuration
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomAuthenticationProvider customAuthenticationProvider;
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    private final GoogleAuthUseCases googleAuthUseCases;
 
+    private final AuthUseCases authUseCases;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
+    private final CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .authenticationProvider(authProvider())
+                .build();
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                        .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
+                        .anyRequest().authenticated()
                 )
-                .formLogin(form ->
-                        form.loginPage("/login")
-                                .loginProcessingUrl("/login")
-                                .usernameParameter("username")
-                                .passwordParameter("password")
-                                .defaultSuccessUrl("/user/{username}/notes", true)
-                                .failureUrl("/login?error=true")
-                                .permitAll()
+                .formLogin((formLogin) -> formLogin.loginPage("/login")
+                        .defaultSuccessUrl("/user/{username}/notes")
+                        .failureUrl("/login?error=true")
+                        .authenticationDetailsSource(authenticationDetailsSource)
+                        .permitAll()
                 )
-                .authenticationProvider(authenticationProvider())
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
-        return authenticationManagerBuilder.build();
+    public DaoAuthenticationProvider authProvider() {
+        final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider(userRepository, authUseCases);
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        return new CustomAuthenticationProvider(userDetailsService, passwordEncoder, googleAuthUseCases);
-    }
 }

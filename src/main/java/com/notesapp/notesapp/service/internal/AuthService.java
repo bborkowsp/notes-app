@@ -5,6 +5,7 @@ import com.notesapp.notesapp.model.Role;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
+import com.notesapp.notesapp.service.GoogleAuthUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,13 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("userDetailsService")
 @Transactional
 @RequiredArgsConstructor
-class AuthService implements AuthUseCases, UserDetailsService {
+public class AuthService implements AuthUseCases, UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final GoogleAuthUseCases googleAuthUseCases;
 
     @Override
     public void register(RegisterUserDto registerUserDto) {
@@ -37,7 +39,13 @@ class AuthService implements AuthUseCases, UserDetailsService {
                         new UsernameNotFoundException("User not found"));
     }
 
-
+    @Override
+    public void checkVerificationCodesMatch(String username, Integer verificationCode) {
+        if (!googleAuthUseCases.validateCode(username, verificationCode)) {
+            throw new IllegalStateException("Verification code does not match");
+        }
+    }
+    
     private void checkIfUserAlreadyExists(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new IllegalStateException("User already exists");
@@ -49,4 +57,6 @@ class AuthService implements AuthUseCases, UserDetailsService {
             throw new IllegalStateException("Email already exists");
         }
     }
+
+
 }

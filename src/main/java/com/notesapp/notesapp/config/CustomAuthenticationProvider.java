@@ -1,38 +1,33 @@
 package com.notesapp.notesapp.config;
 
-import com.notesapp.notesapp.service.GoogleAuthUseCases;
+import com.notesapp.notesapp.model.User;
+import com.notesapp.notesapp.repository.UserRepository;
+import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
+import java.util.Optional;
+
 @RequiredArgsConstructor
-class CustomAuthenticationProvider implements AuthenticationProvider {
+public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    private final GoogleAuthUseCases googleAuthUseCases;
+    private final UserRepository userRepository;
+    private final AuthUseCases authUseCases;
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        final var username = authentication.getName();
-        final var password = authentication.getCredentials().toString();
-        //    final var verificationCode = authentication.getDetails().toString();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        checkUserExists(userDetails);
-        checkPasswordsMatch(password, userDetails.getPassword());
-        //     checkVerificationCodesMatch(username, Integer.parseInt(verificationCode));
-
-        return new UsernamePasswordAuthenticationToken(
-                userDetails, password, userDetails.getAuthorities());
+    public Authentication authenticate(Authentication auth) throws AuthenticationException {
+        Optional<User> user = userRepository.findByUsername(auth.getName());
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        String verificationCode = ((CustomWebAuthenticationDetails) auth.getDetails()).getVerificationCode();
+        authUseCases.checkVerificationCodesMatch(user.get().getUsername(), Integer.valueOf(verificationCode));
+        final Authentication result = super.authenticate(auth);
+        return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
     }
 
     @Override
@@ -40,23 +35,5 @@ class CustomAuthenticationProvider implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    private void checkUserExists(UserDetails userDetails) {
-        if (userDetails == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-    }
 
-    private void checkPasswordsMatch(String password, String encodedPassword) {
-        if (!passwordEncoder.matches(password, encodedPassword)) {
-            throw new IllegalStateException("Password does not match");
-        }
-    }
-
-    private void checkVerificationCodesMatch(String username, Integer verificationCode) {
-        System.out.println("checkVerificationCodesMatch, verificationCode: " + verificationCode);
-        if (!googleAuthUseCases.validateCode(username, verificationCode)) {
-            throw new IllegalStateException("Verification code does not match");
-        }
-        System.out.println("not throw IllegalStateException");
-    }
 }
