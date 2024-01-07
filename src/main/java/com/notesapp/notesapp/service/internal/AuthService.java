@@ -25,8 +25,8 @@ public class AuthService implements AuthUseCases, UserDetailsService {
 
     @Override
     public void register(RegisterUserDto registerUserDto) {
-        checkIfUserAlreadyExists(registerUserDto.username());
-        checkIfEmailAlreadyExists(registerUserDto.email());
+        checkIfPasswordsMatch(registerUserDto.password(), registerUserDto.matchingPassword());
+        checkIfUserAlreadyExists(registerUserDto.username(), registerUserDto.email());
         final var encodedPassword = passwordEncoder.encode(registerUserDto.password());
         final var user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword, Role.USER);
         userRepository.save(user);
@@ -42,20 +42,21 @@ public class AuthService implements AuthUseCases, UserDetailsService {
     @Override
     public void checkVerificationCodesMatch(String username, Integer verificationCode) {
         if (!googleAuthUseCases.validateCode(username, verificationCode)) {
-            throw new IllegalStateException("Verification code does not match");
+            throw new IllegalStateException("Invalid login credentials");
         }
     }
 
-    private void checkIfUserAlreadyExists(String username) {
-        if (userRepository.existsByUsername(username)) {
+    private void checkIfUserAlreadyExists(String username, String email) {
+        if (userRepository.existsByUsername(username) || userRepository.existsByEmail(email)) {
             throw new IllegalStateException("User already exists");
         }
     }
 
-    private void checkIfEmailAlreadyExists(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new IllegalStateException("Email already exists");
+    private void checkIfPasswordsMatch(String password, String matchingPassword) {
+        if (!password.equals(matchingPassword)) {
+            throw new IllegalStateException("Passwords do not match");
         }
     }
+
 
 }

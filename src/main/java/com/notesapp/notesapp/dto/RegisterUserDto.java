@@ -1,6 +1,5 @@
 package com.notesapp.notesapp.dto;
 
-import com.notesapp.notesapp.validation.ValidConfirmationPassword;
 import com.notesapp.notesapp.validation.ValidEmail;
 import com.notesapp.notesapp.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
@@ -12,7 +11,6 @@ import lombok.extern.jackson.Jacksonized;
 
 @Builder
 @Jacksonized
-@ValidConfirmationPassword
 public record RegisterUserDto(
         @NotBlank
         @Size(min = 5, message = "Username is too short!")

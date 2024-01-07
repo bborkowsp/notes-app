@@ -11,10 +11,7 @@
             <div class="col-md-6 offset-md-3">
                 <div class="card mt-2 paint-card">
                     <h1 class="text-center">Register Here</h1>
-                    <div th:if="${session.msg}" class="text-center">
-                        <h4 class="text-success" th:text="${session.msg}"></h4>
-                        <th:block th:text="${#session.removeAttribute('msg')}"></th:block>
-                    </div>
+                    <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
                     <div class="card-body">
                         <form role="form" th:action="@{/register}" th:object="${registerUserDto}" method="post">
                             <div class="form-group mt-2">

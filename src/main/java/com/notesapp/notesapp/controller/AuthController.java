@@ -19,15 +19,18 @@ public class AuthController {
     private final AuthUseCases authUseCases;
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("registerUserDto") RegisterUserDto registerUserDto,
-                           BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
-        System.out.println(bindingResult.toString());
+    public String register(@Valid @ModelAttribute("registerUserDto") RegisterUserDto registerUserDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("registerUserDto", registerUserDto);
             return "register";
         }
-        authUseCases.register(registerUserDto);
-        redirectAttributes.addAttribute("username", registerUserDto.username());
-        return "redirect:/qrcode/{username}";
+        try {
+            authUseCases.register(registerUserDto);
+            redirectAttributes.addAttribute("username", registerUserDto.username());
+            return "redirect:/qrcode/{username}";
+        } catch (IllegalStateException exception) {
+            model.addAttribute("error", exception.getMessage());
+            return "register";
+        }
     }
 }

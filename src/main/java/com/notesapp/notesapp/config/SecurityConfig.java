@@ -48,6 +48,10 @@ public class SecurityConfig {
                         .authenticationDetailsSource(authenticationDetailsSource)
                         .permitAll()
                 )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                )
                 .build();
     }
 
