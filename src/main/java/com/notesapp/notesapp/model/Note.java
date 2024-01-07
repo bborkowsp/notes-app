@@ -19,6 +19,20 @@ public class Note {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private Boolean isEncrypted;
+
+    @Column(nullable = false)
+    private Boolean isPublic;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private User author;
+
+    public Note(String title, String content, User user, Boolean aPublic, boolean isEncrypted) {
+        this.title = title;
+        this.content = content;
+        this.author = user;
+        this.isPublic = aPublic;
+        this.isEncrypted = isEncrypted;
+    }
 }

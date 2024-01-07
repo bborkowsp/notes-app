@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.loginPage("/login")
-                        .defaultSuccessUrl("/user/{username}/notes")
+                        .defaultSuccessUrl("/notes/my-notes")
                         .failureUrl("/login?error=true")
                         .authenticationDetailsSource(authenticationDetailsSource)
                         .permitAll()
