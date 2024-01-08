@@ -1,6 +1,6 @@
 package com.notesapp.notesapp.repository;
 
-import com.notesapp.notesapp.model.UserTOTPCredentials;
+import com.notesapp.notesapp.model.TotpCredentials;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,16 +22,16 @@ public class CredentialRepository implements ICredentialRepository {
 
     @Override
     public void saveUserCredentials(String username, String secretKey, int verificationCode, List<Integer> scratchCodes) {
-        UserTOTPCredentials userTOTPCredentials = createUserTOTPCredentials(secretKey, verificationCode, scratchCodes);
+        TotpCredentials totpCredentials = createUserTotpCredentials(secretKey, verificationCode, scratchCodes);
 
         userRepository.findByUsername(username).ifPresent(user -> {
-            user.setCredentials(userTOTPCredentials);
+            user.setCredentials(totpCredentials);
             userRepository.save(user);
         });
     }
 
-    private UserTOTPCredentials createUserTOTPCredentials(String secretKey, int verificationCode, List<Integer> scratchCodes) {
-        return UserTOTPCredentials.builder()
+    private TotpCredentials createUserTotpCredentials(String secretKey, int verificationCode, List<Integer> scratchCodes) {
+        return TotpCredentials.builder()
                 .secretKey(secretKey)
                 .verificationCode(verificationCode)
                 .scratchCodes(scratchCodes)

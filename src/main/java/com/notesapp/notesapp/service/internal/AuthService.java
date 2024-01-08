@@ -6,6 +6,7 @@ import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import com.notesapp.notesapp.service.GoogleAuthUseCases;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,10 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("userDetailsService")
+@Service
 @Transactional
-@RequiredArgsConstructor
-public class AuthService implements AuthUseCases, UserDetailsService {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class AuthService implements AuthUseCases, UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

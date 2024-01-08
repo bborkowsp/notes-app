@@ -5,7 +5,11 @@ import lombok.extern.jackson.Jacksonized;
 
 @Builder
 @Jacksonized
-public record NoteDto(
+public record UserNoteDto(
+        Long id,
         String title,
-        String content) {
+        String content,
+        Boolean isEncrypted,
+        Boolean isPublic
+) {
 }

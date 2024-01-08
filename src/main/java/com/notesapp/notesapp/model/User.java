@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
-    private UserTOTPCredentials userTOTPCredentials;
+    private TotpCredentials totpCredentials;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -46,8 +46,8 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    public void setCredentials(UserTOTPCredentials userTOTPCredentials) {
-        this.userTOTPCredentials = userTOTPCredentials;
+    public void setCredentials(TotpCredentials totpCredentials) {
+        this.totpCredentials = totpCredentials;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class User implements UserDetails {
         return true;
     }
 
-    public UserTOTPCredentials getCredentials() {
-        return this.userTOTPCredentials;
+    public TotpCredentials getCredentials() {
+        return this.totpCredentials;
     }
 }

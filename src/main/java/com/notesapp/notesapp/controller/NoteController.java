@@ -22,7 +22,7 @@ class NoteController {
     private final NoteUseCases noteUseCases;
 
     @GetMapping("/my-notes")
-    public String getAllNotes(Model model, @AuthenticationPrincipal User user) {
+    public String getAllNotesAndShowPage(Model model, @AuthenticationPrincipal User user) {
         final var notes = noteUseCases.getAllUserNotes(user);
         model.addAttribute("notes", notes);
         return "user/notes";
@@ -36,7 +36,6 @@ class NoteController {
 
     @PostMapping("/create")
     String createNote(@Valid CreateNoteDto createNoteDto, BindingResult bindingResult, @AuthenticationPrincipal User user, Model model) {
-        System.out.println(createNoteDto);
         if (bindingResult.hasErrors()) {
             return "user/create-note";
         }

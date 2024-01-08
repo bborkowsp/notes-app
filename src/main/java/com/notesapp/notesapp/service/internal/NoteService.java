@@ -1,12 +1,13 @@
 package com.notesapp.notesapp.service.internal;
 
 import com.notesapp.notesapp.dto.CreateNoteDto;
-import com.notesapp.notesapp.dto.NoteDto;
+import com.notesapp.notesapp.dto.UserNoteDto;
 import com.notesapp.notesapp.mapper.NoteMapper;
 import com.notesapp.notesapp.model.Note;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.NoteRepository;
 import com.notesapp.notesapp.service.NoteUseCases;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.owasp.html.Sanitizers;
 import org.springframework.stereotype.Service;
@@ -16,16 +17,16 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class NoteService implements NoteUseCases {
 
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
 
     @Override
-    public List<NoteDto> getAllUserNotes(User user) {
+    public List<UserNoteDto> getAllUserNotes(User user) {
         return noteRepository.findAllByAuthor(user).stream()
-                .map(noteMapper::mapNoteToNoteDto)
+                .map(noteMapper::mapNoteToUserNoteDto)
                 .toList();
     }
 
@@ -33,12 +34,13 @@ class NoteService implements NoteUseCases {
     public void createNote(CreateNoteDto createNoteDto, User user) throws Exception {
         final var sanitizedTitle = sanitizeHtml(createNoteDto.title());
         final var sanitizedContent = sanitizeHtml(createNoteDto.content());
-        final var password = createNoteDto.password();
-        final var isEncrypted = password != null && !password.isBlank();
+        final var isEncrypted = createNoteDto.password() != null && !createNoteDto.password().isBlank();
+        final var password = sanitizeHtml(createNoteDto.password());
         final var title = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedTitle) : sanitizedTitle;
         final var content = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedContent) : sanitizedContent;
         final var note = new Note(title, content, user, createNoteDto.isPublic(), isEncrypted);
         validateNoteIsNotEncryptedAndPublic(note);
+        System.out.println(note);
         noteRepository.save(note);
     }
 
