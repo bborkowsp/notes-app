@@ -15,6 +15,14 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link rel="stylesheet" href="//cdn.quilljs.com/1.3.6/quill.snow.css">
+
+    <style>
+        #content {
+            height: 375px;
+        }
+    </style>
 </head>
 <body>
 
@@ -43,6 +51,24 @@
 </nav>
 
 <div th:replace="${content}"></div>
+
+<script src="//cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var quill = new Quill('#content', {
+            modules: {
+                toolbar: [
+                    [{header: [1, 2, 3, 4, 5, false]}],
+                    ['bold', 'italic', 'underline'],
+                    ['image', 'code-block']
+                ]
+            },
+            placeholder: 'Note content ...',
+            theme: 'snow'
+        });
+    });
+</script>
+
 <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYLzcLA8NL+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
