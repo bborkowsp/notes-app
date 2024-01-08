@@ -1,20 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{user/base::layout(~{::section})}"
->
-<head>
-    <meta charset="UTF-8">
-    <title>Notes Page</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="user/base.html :: head(title='Create Note')"></head>
 <body>
-<section>
-    <h2>Notes List</h2>
-    <div class="notes-container">
-        <div th:each="note : ${notes}" class="note-card">
-            <h3 th:text="${note.title}"></h3>
-            <p th:text="${note.content}"></p>
-        </div>
-    </div>
-</section>
+<nav th:replace="user/base.html :: nav"></nav>
+Hello World
+
+<th:block th:replace="user/base.html :: scripts"></th:block>
 </body>
 </html>

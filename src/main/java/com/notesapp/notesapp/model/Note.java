@@ -3,9 +3,9 @@ package com.notesapp.notesapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
 @Data
-@NoArgsConstructor
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

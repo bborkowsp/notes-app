@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 @Entity
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserTOTPCredentials {
     @Id
@@ -19,6 +19,7 @@ public class UserTOTPCredentials {
     @ToString.Exclude
     private Long id;
 
+    @Column(nullable = false)
     String secretKey;
 
     int verificationCode;

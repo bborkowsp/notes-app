@@ -3,6 +3,7 @@ package com.notesapp.notesapp.config;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,8 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
-public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
     private final UserRepository userRepository;
     private final AuthUseCases authUseCases;

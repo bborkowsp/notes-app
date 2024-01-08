@@ -2,6 +2,7 @@ package com.notesapp.notesapp.config;
 
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
-public class SecurityConfig {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class SecurityConfig {
 
     private final AuthUseCases authUseCases;
     private final UserRepository userRepository;
@@ -40,7 +41,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.loginPage("/login")
                         .defaultSuccessUrl("/notes/my-notes")

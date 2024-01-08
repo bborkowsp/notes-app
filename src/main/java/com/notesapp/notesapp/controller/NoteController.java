@@ -4,6 +4,7 @@ import com.notesapp.notesapp.dto.CreateNoteDto;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.service.NoteUseCases;
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/notes")
-@RequiredArgsConstructor
-public class NoteController {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class NoteController {
 
     private final NoteUseCases noteUseCases;
 

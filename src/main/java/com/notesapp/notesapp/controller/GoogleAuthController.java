@@ -8,6 +8,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
@@ -19,13 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Controller
-@RequiredArgsConstructor
-public class GoogleAuthController {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class GoogleAuthController {
 
     private final GoogleAuthenticator googleAuthenticator;
 
     @GetMapping("/qrcode/{username}")
-    public String showQRCode(@PathVariable String username, Model model) throws WriterException, IOException {
+    public String showQRCodePage(@PathVariable String username, Model model) throws WriterException, IOException {
         final GoogleAuthenticatorKey key = googleAuthenticator.createCredentials(username);
 
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
