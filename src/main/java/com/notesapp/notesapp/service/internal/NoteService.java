@@ -31,7 +31,6 @@ class NoteService implements NoteUseCases {
 
     @Override
     public void createNote(CreateNoteDto createNoteDto, User user) throws Exception {
-        validateNoteIsNotEncryptedAndPublic(createNoteDto);
         final var sanitizedTitle = sanitizeHtml(createNoteDto.title());
         final var sanitizedContent = sanitizeHtml(createNoteDto.content());
         final var password = createNoteDto.password();
@@ -39,11 +38,12 @@ class NoteService implements NoteUseCases {
         final var title = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedTitle) : sanitizedTitle;
         final var content = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedContent) : sanitizedContent;
         final var note = new Note(title, content, user, createNoteDto.isPublic(), isEncrypted);
+        validateNoteIsNotEncryptedAndPublic(note);
         noteRepository.save(note);
     }
 
-    private void validateNoteIsNotEncryptedAndPublic(CreateNoteDto createNoteDto) {
-        if (createNoteDto.isPublic() && createNoteDto.isEncrypted()) {
+    private void validateNoteIsNotEncryptedAndPublic(Note note) {
+        if (note.getIsPublic() && note.getIsEncrypted()) {
             throw new IllegalArgumentException("Cannot create public encrypted note");
         }
     }

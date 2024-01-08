@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-$('#isPublicCheckbox').on('click', function () {
-    var cb = $('#isPublicCheckbox').is(':checked');
-    $('#customPassword').prop('disabled', cb);
+$('#isPublicJs').on('click', function () {
+    var cb = $('#isPublicJs').is(':checked');
+    $('#passwordJs').prop('disabled', cb);
 });
 
 
