@@ -1,6 +1,5 @@
 package com.notesapp.notesapp.config;
 
-import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.AccessLevel;
@@ -10,9 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Optional;
 import java.util.Random;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -24,20 +22,22 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         delayLogin();
-        Optional<User> user = userRepository.findByUsername(authentication.getName());
-        System.out.println("---------------------");
-        System.out.println(user);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("Invalid credentials");
-        }
-        String verificationCode = ((CustomWebAuthenticationDetails) authentication.getDetails()).getVerificationCode();
         try {
-            authUseCases.checkVerificationCodesMatch(user.get().getUsername(), Integer.valueOf(verificationCode));
-        } catch (IllegalStateException exception) {
-            throw new BadCredentialsException(exception.getMessage());
+            return super.authenticate(authentication);
+        } catch (AuthenticationException exception) {
+            throw exception;
         }
-        final Authentication result = super.authenticate(authentication);
-        return new UsernamePasswordAuthenticationToken(user, result.getCredentials(), result.getAuthorities());
+    }
+
+    @Override
+    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        super.additionalAuthenticationChecks(userDetails, authentication);
+        validateVerificationCode(authentication);
+    }
+
+    @Override
+    protected Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user) {
+        return super.createSuccessAuthentication(principal, authentication, user);
     }
 
     @Override
@@ -52,6 +52,17 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             Thread.sleep(randomDuration);
         } catch (InterruptedException exception) {
             throw new RuntimeException(exception);
+        }
+    }
+
+    private void validateVerificationCode(Authentication authentication) {
+        final var user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+        String verificationCode = ((CustomWebAuthenticationDetails) authentication.getDetails()).getVerificationCode();
+        try {
+            authUseCases.checkVerificationCodesMatch(user.getUsername(), Integer.valueOf(verificationCode));
+        } catch (IllegalStateException exception) {
+            throw new BadCredentialsException(exception.getMessage());
         }
     }
 }

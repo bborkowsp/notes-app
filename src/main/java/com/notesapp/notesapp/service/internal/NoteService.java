@@ -47,7 +47,6 @@ class NoteService implements NoteUseCases {
     @Override
     public void deleteNote(Long id, User user) {
         final var note = noteRepository.findById(id).orElseThrow();
-        System.out.println(note);
         validateUserIsNoteAuthor(user, note);
         noteRepository.delete(note);
     }

@@ -3,7 +3,6 @@ package com.notesapp.notesapp.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -29,21 +28,18 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private TotpCredentials totpCredentials;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    public User(String username, String email, String password, Role role) {
+    public User(@NonNull String username, @NonNull String email, @NonNull String password) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.role = role;
     }
 
     public void setCredentials(TotpCredentials totpCredentials) {
@@ -52,8 +48,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Set.of(new SimpleGrantedAuthority(role.name()));
+        return Set.of();
     }
+
 
     @Override
     public String getPassword() {

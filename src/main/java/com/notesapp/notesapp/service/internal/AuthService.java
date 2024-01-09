@@ -1,12 +1,12 @@
 package com.notesapp.notesapp.service.internal;
 
 import com.notesapp.notesapp.dto.RegisterUserDto;
-import com.notesapp.notesapp.model.Role;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import com.notesapp.notesapp.service.GoogleAuthUseCases;
 import lombok.AccessLevel;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,12 +29,12 @@ class AuthService implements AuthUseCases, UserDetailsService {
         checkIfPasswordsMatch(registerUserDto.password(), registerUserDto.matchingPassword());
         checkIfUserAlreadyExists(registerUserDto.username(), registerUserDto.email());
         final var encodedPassword = passwordEncoder.encode(registerUserDto.password());
-        final var user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword, Role.USER);
+        final var user = new User(registerUserDto.username(), registerUserDto.email(), encodedPassword);
         userRepository.save(user);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }

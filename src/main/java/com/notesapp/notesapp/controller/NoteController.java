@@ -24,8 +24,6 @@ class NoteController {
 
     @GetMapping("/my-notes")
     public String getAllNotesAndShowPage(Model model, @AuthenticationPrincipal User user) {
-        System.out.println("---------------------");
-        System.out.println(user);
         final var notes = noteUseCases.getAllUserNotes(user);
         model.addAttribute("notes", notes);
         return "user/notes";
@@ -56,7 +54,7 @@ class NoteController {
     String deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
         System.out.println(id);
         noteUseCases.deleteNote(id, user);
-        return "redirect:/notes";
+        return "redirect:/notes/my-notes";
     }
 
 
