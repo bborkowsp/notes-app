@@ -10,4 +10,6 @@ public interface NoteUseCases {
     List<UserNoteDto> getAllUserNotes(User user);
 
     void createNote(CreateNoteDto createNoteDto, User user) throws Exception;
+
+    void deleteNote(Long id, User user);
 }

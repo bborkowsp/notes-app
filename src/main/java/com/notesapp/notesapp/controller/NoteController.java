@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -23,6 +24,8 @@ class NoteController {
 
     @GetMapping("/my-notes")
     public String getAllNotesAndShowPage(Model model, @AuthenticationPrincipal User user) {
+        System.out.println("---------------------");
+        System.out.println(user);
         final var notes = noteUseCases.getAllUserNotes(user);
         model.addAttribute("notes", notes);
         return "user/notes";
@@ -40,12 +43,20 @@ class NoteController {
             return "user/create-note";
         }
         try {
+            System.out.println(user);
             noteUseCases.createNote(createNoteDto, user);
         } catch (Exception exception) {
             model.addAttribute("error", exception.getMessage());
             return "user/create-note";
         }
         return "redirect:/notes/my-notes";
+    }
+
+    @GetMapping("/delete/{id}")
+    String deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        System.out.println(id);
+        noteUseCases.deleteNote(id, user);
+        return "redirect:/notes";
     }
 
 

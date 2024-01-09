@@ -44,6 +44,20 @@ class NoteService implements NoteUseCases {
         noteRepository.save(note);
     }
 
+    @Override
+    public void deleteNote(Long id, User user) {
+        final var note = noteRepository.findById(id).orElseThrow();
+        System.out.println(note);
+        validateUserIsNoteAuthor(user, note);
+        noteRepository.delete(note);
+    }
+
+    private void validateUserIsNoteAuthor(User user, Note note) {
+        if (!note.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("User is not authorized to perform this action");
+        }
+    }
+
     private void validateNoteIsNotEncryptedAndPublic(Note note) {
         if (note.getIsPublic() && note.getIsEncrypted()) {
             throw new IllegalArgumentException("Cannot create public encrypted note");

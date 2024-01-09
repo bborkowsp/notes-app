@@ -25,6 +25,8 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         delayLogin();
         Optional<User> user = userRepository.findByUsername(authentication.getName());
+        System.out.println("---------------------");
+        System.out.println(user);
         if (user.isEmpty()) {
             throw new UsernameNotFoundException("Invalid credentials");
         }
