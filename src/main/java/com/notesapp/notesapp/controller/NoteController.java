@@ -1,6 +1,7 @@
 package com.notesapp.notesapp.controller;
 
 import com.notesapp.notesapp.dto.CreateNoteDto;
+import com.notesapp.notesapp.dto.EncryptDecryptNoteDto;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.service.NoteUseCases;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ class NoteController {
     public String getAllNotesAndShowPage(Model model, @AuthenticationPrincipal User user) {
         final var notes = noteUseCases.getAllUserNotes(user);
         model.addAttribute("notes", notes);
+        model.addAttribute("encryptDecryptNoteDto", new EncryptDecryptNoteDto(null, ""));
         return "user/notes";
     }
 
@@ -41,7 +43,6 @@ class NoteController {
             return "user/create-note";
         }
         try {
-            System.out.println(user);
             noteUseCases.createNote(createNoteDto, user);
         } catch (Exception exception) {
             model.addAttribute("error", exception.getMessage());
@@ -52,11 +53,22 @@ class NoteController {
 
     @GetMapping("/delete/{id}")
     String deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        System.out.println(id);
         noteUseCases.deleteNote(id, user);
         return "redirect:/notes/my-notes";
     }
 
+    @PostMapping("/encrypt-decrypt")
+    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult) {
+        System.out.println("-----------------");
+        System.out.println(encryptDecryptNoteDto.getEncryptDecryptNoteId());
+        try {
+            noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
+            return "redirect:/notes/my-notes";
+        } catch (Exception exception) {
+            return "redirect:/notes/my-notes?error=" + exception.getMessage();
+        }
+
+    }
 
 }
 

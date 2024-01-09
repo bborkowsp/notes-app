@@ -28,10 +28,16 @@ public class Note {
     @ManyToOne(fetch = FetchType.LAZY)
     private User author;
 
-    public Note(String title, String content, User user, Boolean aPublic, boolean isEncrypted) {
+    @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
+    private String password;
+
+
+    public Note(String title, String content, User user, String password, Boolean aPublic, boolean isEncrypted) {
         this.title = title;
         this.content = content;
         this.author = user;
+        this.password = password;
         this.isPublic = aPublic;
         this.isEncrypted = isEncrypted;
     }

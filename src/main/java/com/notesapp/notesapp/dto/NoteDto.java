@@ -5,8 +5,8 @@ import lombok.extern.jackson.Jacksonized;
 
 @Builder
 @Jacksonized
-public record UserNoteDto(
-        Long id,
+public record NoteDto(
+        Long noteId,
         String title,
         String content,
         Boolean isEncrypted,
