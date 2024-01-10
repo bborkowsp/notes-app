@@ -5,6 +5,7 @@ import com.notesapp.notesapp.dto.EncryptDecryptNoteDto;
 import com.notesapp.notesapp.dto.UpdateNoteDto;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.service.NoteUseCases;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,11 +36,39 @@ class NoteController {
 
     @GetMapping("/public-notes")
     public String getAllPublicNotesAndShowPage(Model model, @AuthenticationPrincipal User user) {
-        final var notes = noteUseCases.getAllPublicNotes(user);
-        model.addAttribute("notes", notes);
-        model.addAttribute("encryptDecryptNoteDto", new EncryptDecryptNoteDto(null, ""));
-        return "note/public-notes";
+        try {
+            final var notes = noteUseCases.getAllPublicNotes(user);
+            model.addAttribute("notes", notes);
+            model.addAttribute("encryptDecryptNoteDto", new EncryptDecryptNoteDto(null, ""));
+            return "note/public-notes";
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("error", exception.getMessage());
+            return "redirect:/notes/my-notes?error=" + exception.getMessage();
+        }
     }
+
+    @PostMapping("/encrypt-decrypt")
+    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult, Model model, HttpServletRequest request) {
+        try {
+            noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
+            String referer = request.getHeader("Referer");
+            if (referer != null && referer.contains("/notes/my-notes")) {
+                return "redirect:/notes/my-notes";
+            } else if (referer != null && referer.contains("/notes/public-notes")) {
+                return "redirect:/notes/public-notes";
+            } else {
+                return "redirect:/notes/my-notes";
+            }
+        } catch (Exception exception) {
+            model.addAttribute("error", exception.getMessage());
+            if (request.getHeader("Referer").contains("/notes/my-notes")) {
+                return "redirect:/notes/my-notes" + "?error=" + exception.getMessage();
+            } else {
+                return "redirect:/notes/public-notes" + "?error=" + exception.getMessage();
+            }
+        }
+    }
+
 
     @GetMapping("/create")
     String showCreateNotePage(Model model) {
@@ -67,16 +96,6 @@ class NoteController {
         return "redirect:/notes/my-notes";
     }
 
-    @PostMapping("/encrypt-decrypt")
-    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult, Model model) {
-        try {
-            noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
-            return "redirect:/notes/my-notes";
-        } catch (Exception exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "redirect:/notes/my-notes?error=" + exception.getMessage();
-        }
-    }
 
     @GetMapping("/edit/{id}")
     String showEditPage(@PathVariable Long id, Model model, @AuthenticationPrincipal User user) {

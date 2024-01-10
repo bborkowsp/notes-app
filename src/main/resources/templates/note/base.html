@@ -44,9 +44,9 @@
                 </li>
             </ul>
             <form class="d-flex">
-                <a class="btn btn-light" th:href="@{/userDetails}">
-                    <i class="fa-solid fa-user"></i> Your account
-                </a>
+            <span class="navbar-text">
+                <i class="fa-solid fa-user"></i> Hello, <span th:text="${#authentication.name}"></span>
+            </span>
                 <a class="btn btn-light ms-2" th:href="@{/logout}">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>
