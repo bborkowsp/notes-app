@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     quill.on('text-change', function () {
-        var content = quill.root.innerHTML;
+        var content = quill.root.innerText;
         $('#contentInput').val(content);
     });
 });
