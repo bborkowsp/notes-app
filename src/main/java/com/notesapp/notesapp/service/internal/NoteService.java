@@ -59,32 +59,44 @@ class NoteService implements NoteUseCases {
         final var note = noteRepository.findById(encryptDecryptNoteDto.getEncryptDecryptNoteId()).orElseThrow();
         validateUserIsNoteAuthor(user, note);
         final var password = sanitizeHtml(encryptDecryptNoteDto.getPassword());
-        System.out.println("encryptOrDecrypt------------------");
-        System.out.println(password);
+
         if (note.getIsEncrypted()) {
-            validatePasswordIsCorrect(password, note);
-            final var decryptedTitle = NoteEncryptionService.decrypt(note.getTitle(), password);
-            System.out.println(decryptedTitle);
-            final var decryptedContent = NoteEncryptionService.decrypt(note.getContent(), password);
-            note.setTitle(decryptedTitle);
-            note.setContent(decryptedContent);
-            note.setIsEncrypted(false);
+            decryptNote(note, password);
         } else {
-            final var encryptedTitle = NoteEncryptionService.encrypt(password, note.getTitle());
-            final var encryptedContent = NoteEncryptionService.encrypt(password, note.getContent());
-            final var encodedPassword = passwordEncoder.encode(password);
-            note.setPassword(encodedPassword);
-            note.setTitle(encryptedTitle);
-            note.setContent(encryptedContent);
-            note.setIsEncrypted(true);
+            encryptNote(note, password);
         }
     }
 
+    private void decryptNote(Note note, String password) throws Exception {
+        validatePasswordIsCorrect(password, note);
+        final var decryptedTitle = NoteEncryptionService.decrypt(note.getTitle(), password);
+        System.out.println(decryptedTitle);
+        final var decryptedContent = NoteEncryptionService.decrypt(note.getContent(), password);
+        updateNoteAfterDecryption(note, decryptedTitle, decryptedContent);
+    }
+
+    private void encryptNote(Note note, String password) throws Exception {
+        final var encryptedTitle = NoteEncryptionService.encrypt(password, note.getTitle());
+        final var encryptedContent = NoteEncryptionService.encrypt(password, note.getContent());
+        final var encodedPassword = passwordEncoder.encode(password);
+        updateNoteAfterEncryption(note, encryptedTitle, encryptedContent, encodedPassword);
+    }
+
+    private void updateNoteAfterDecryption(Note note, String decryptedTitle, String decryptedContent) {
+        note.setTitle(decryptedTitle);
+        note.setContent(decryptedContent);
+        note.setIsEncrypted(false);
+    }
+
+    private void updateNoteAfterEncryption(Note note, String encryptedTitle, String encryptedContent, String encodedPassword) {
+        note.setTitle(encryptedTitle);
+        note.setContent(encryptedContent);
+        note.setPassword(encodedPassword);
+        note.setIsEncrypted(true);
+    }
+
+
     private void validatePasswordIsCorrect(String password, Note note) {
-        System.out.println("validatePasswordIsCorrect------------------");
-        System.out.println(note.getPassword());
-        System.out.println(password);
-        System.out.println(passwordEncoder.encode(password));
         if (!passwordEncoder.matches(password, note.getPassword())) {
             throw new IllegalArgumentException("Incorrect password");
         }

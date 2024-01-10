@@ -1,15 +1,13 @@
-$(document).ready(function () {
-    $('#deleteModalWindow').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var noteId = button.data('noteid'); // Assuming you have a data-noteid attribute on the button
+function setNoteId(noteId) {
+    document.getElementById('encryptDecryptId').value = noteId;
+}
 
-        // Update the "Delete note" button click event
-        $('#deleteNoteButton').on('click', function () {
-            // Perform the delete action here, using the noteId if needed
-            // ...
-
-            // Close the modal
-            $('#deleteModalWindow').modal('hide');
-        });
-    });
-});
+function setTitle(isEncrypted) {
+    if (isEncrypted) {
+        document.getElementById('encryptDecryptModalTitle').innerText = 'Decrypt';
+        document.getElementById('encryptDecryptSubmitBtn').innerText = 'Decrypt';
+    } else {
+        document.getElementById('encryptDecryptModalTitle').innerText = 'Encrypt';
+        document.getElementById('encryptDecryptSubmitBtn').innerText = 'Encrypt';
+    }
+}
