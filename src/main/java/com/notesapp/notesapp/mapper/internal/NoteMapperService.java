@@ -1,6 +1,7 @@
 package com.notesapp.notesapp.mapper.internal;
 
 import com.notesapp.notesapp.dto.PublicNoteDto;
+import com.notesapp.notesapp.dto.UpdateNoteDto;
 import com.notesapp.notesapp.dto.UserNoteDto;
 import com.notesapp.notesapp.mapper.NoteMapper;
 import com.notesapp.notesapp.model.Note;
@@ -29,6 +30,16 @@ class NoteMapperService implements NoteMapper {
                 .content(note.getContent())
                 .isEncrypted(note.getIsEncrypted())
                 .isPublic(note.getIsPublic())
+                .build();
+    }
+
+    @Override
+    public Note mapUpdateNoteDtoToNote(UpdateNoteDto updateNoteDto) {
+        return Note.builder()
+                .title(updateNoteDto.title())
+                .content(updateNoteDto.content())
+                .password(updateNoteDto.password())
+                .isPublic(updateNoteDto.isPublic())
                 .build();
     }
 }

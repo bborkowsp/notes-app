@@ -6,7 +6,11 @@ import org.passay.*;
 
 import java.util.Arrays;
 
+import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
+import static com.notesapp.notesapp.validation.ValidPassword.MIN_PASSWORD_LENGTH;
+
 class CustomPasswordValidator implements ConstraintValidator<ValidPassword, String> {
+
 
     @Override
     public void initialize(final ValidPassword arg0) {
@@ -26,7 +30,7 @@ class CustomPasswordValidator implements ConstraintValidator<ValidPassword, Stri
 
     private PasswordValidator createPasswordValidator() {
         return new PasswordValidator(Arrays.asList(
-                new LengthRule(8, 120),
+                new LengthRule(MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH),
                 new CharacterRule(EnglishCharacterData.UpperCase, 1),
                 new CharacterRule(EnglishCharacterData.LowerCase, 1),
                 new CharacterRule(EnglishCharacterData.Digit, 1),

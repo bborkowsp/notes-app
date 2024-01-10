@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
+
 
 public record RegisterUserDto(
         @NotBlank
@@ -24,7 +26,7 @@ public record RegisterUserDto(
         String password,
 
         @NotBlank
-        @Size(min = 1, max = 120, message = "Password must be no more than 120 characters in length.")
+        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must be no more than 120 characters in length.")
         String matchingPassword
 ) {
 }
