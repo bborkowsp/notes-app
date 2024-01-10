@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{user/base.html :: head(title='My Notes')}"></head>
+<head th:replace="~{note/base.html :: head(title='Public Notes')}"></head>
 <body>
-<nav th:replace="~{user/base.html :: nav}"></nav>
+<nav th:replace="~{note/base.html :: nav}"></nav>
 
 <div class="container mt-4">
-    <h2>My Notes</h2>
     <div class="alert alert-danger" role="alert" th:if="${param.error}" th:text="${param.error}"></div>
     <div th:each="note, noteIndex : ${notes}">
         <div class="card my-2">
             <div class="card-body">
+                <h4 class="card-title">
+                    <strong>Author:</strong> <span th:text="${note.author}"></span>
+                </h4>
                 <h5 class="card-title" th:text="${note.title}"></h5>
                 <p class="card-text" th:text="${note.content}"></p>
                 <hr>
                 <p class="card-text">
                     <span th:if="${note.isEncrypted}">Encrypted</span>
                     <span th:if="${!note.isEncrypted}">Not Encrypted</span>
-                </p>
-                <p class="card-text">
-                    <span th:if="${note.isPublic}">Public</span>
-                    <span th:if="${!note.isPublic}">Private</span>
                 </p>
                 <a class="btn btn-primary" th:href="@{/notes/edit/{id}(id=${note.noteId})}">Edit</a>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
@@ -93,7 +91,7 @@
     </div>
 </div>
 
-<th:block th:replace="~{user/base.html :: scripts}"></th:block>
+<th:block th:replace="~{note/base.html :: scripts}"></th:block>
 <script th:src="@{/js/delete-modal-window.js}" type="text/javascript"></script>
 </body>
 </html>

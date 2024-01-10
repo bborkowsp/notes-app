@@ -1,9 +1,6 @@
 package com.notesapp.notesapp.service.internal;
 
-import com.notesapp.notesapp.dto.CreateNoteDto;
-import com.notesapp.notesapp.dto.EncryptDecryptNoteDto;
-import com.notesapp.notesapp.dto.NoteDto;
-import com.notesapp.notesapp.dto.UpdateNoteDto;
+import com.notesapp.notesapp.dto.*;
 import com.notesapp.notesapp.mapper.NoteMapper;
 import com.notesapp.notesapp.model.Note;
 import com.notesapp.notesapp.model.User;
@@ -35,13 +32,17 @@ class NoteService implements NoteUseCases {
     }
 
     @Override
+    public List<PublicNoteDto> getAllPublicNotes(User user) {
+        return noteRepository.findAllByIsPublicIsTrue().stream()
+                .filter(note -> !note.getAuthor().equals(user))
+                .map(noteMapper::mapNoteToPublicNoteDto)
+                .toList();
+    }
+
+    @Override
     public void createNote(CreateNoteDto createNoteDto, User user) throws Exception {
         final var sanitizedTitle = sanitizeHtml(createNoteDto.title());
-        System.out.println("--------------------");
-        System.out.println(createNoteDto.content());
         final var sanitizedContent = sanitizeHtml(createNoteDto.content());
-        System.out.println("--------------------");
-        System.out.println(sanitizedContent);
         final var isEncrypted = createNoteDto.password() != null && !createNoteDto.password().isBlank();
         final var password = sanitizeHtml(createNoteDto.password());
         final var title = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedTitle) : sanitizedTitle;
