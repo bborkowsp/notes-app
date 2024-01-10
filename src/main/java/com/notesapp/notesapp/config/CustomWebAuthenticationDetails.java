@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 class CustomWebAuthenticationDetails extends WebAuthenticationDetails {
+
     private final String verificationCode;
 
     public CustomWebAuthenticationDetails(HttpServletRequest httpServletRequest) {

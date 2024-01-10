@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class AuthController {
@@ -33,16 +32,29 @@ class AuthController {
     @PostMapping("/register")
     public String register(@Valid RegisterUserDto registerUserDto, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("registerUserDto", registerUserDto);
-            return "register";
+            return handleRegistrationErrors(registerUserDto, model);
         }
+
         try {
             authUseCases.register(registerUserDto);
-            redirectAttributes.addAttribute("username", registerUserDto.username());
-            return "redirect:/qrcode/{username}";
+            return handleSuccessfulRegistration(registerUserDto, redirectAttributes);
         } catch (IllegalStateException exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "register";
+            return handleFailedRegistration(model, exception);
         }
+    }
+
+    private String handleRegistrationErrors(RegisterUserDto registerUserDto, Model model) {
+        model.addAttribute("registerUserDto", registerUserDto);
+        return "register";
+    }
+
+    private String handleSuccessfulRegistration(RegisterUserDto registerUserDto, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addAttribute("username", registerUserDto.username());
+        return "redirect:/qrcode/{username}";
+    }
+
+    private String handleFailedRegistration(Model model, IllegalStateException exception) {
+        model.addAttribute("error", exception.getMessage());
+        return "register";
     }
 }

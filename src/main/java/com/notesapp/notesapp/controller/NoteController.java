@@ -42,33 +42,19 @@ class NoteController {
             model.addAttribute("encryptDecryptNoteDto", new EncryptDecryptNoteDto(null, ""));
             return "note/public-notes";
         } catch (IllegalArgumentException exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "redirect:/notes/my-notes?error=" + exception.getMessage();
+            return handleNotesError(model, exception);
         }
     }
 
     @PostMapping("/encrypt-decrypt")
-    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult, Model model, HttpServletRequest request) {
+    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
         try {
             noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
-            String referer = request.getHeader("Referer");
-            if (referer != null && referer.contains("/notes/my-notes")) {
-                return "redirect:/notes/my-notes";
-            } else if (referer != null && referer.contains("/notes/public-notes")) {
-                return "redirect:/notes/public-notes";
-            } else {
-                return "redirect:/notes/my-notes";
-            }
+            return handleEncryptDecryptSuccess(request.getHeader("Referer"));
         } catch (Exception exception) {
-            model.addAttribute("error", exception.getMessage());
-            if (request.getHeader("Referer").contains("/notes/my-notes")) {
-                return "redirect:/notes/my-notes" + "?error=" + exception.getMessage();
-            } else {
-                return "redirect:/notes/public-notes" + "?error=" + exception.getMessage();
-            }
+            return handleEncryptDecryptError(model, exception, request.getHeader("Referer"));
         }
     }
-
 
     @GetMapping("/create")
     String showCreateNotePage(Model model) {
@@ -84,10 +70,14 @@ class NoteController {
         try {
             noteUseCases.createNote(createNoteDto, user);
         } catch (Exception exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "note/create-note";
+            return handleNoteCreationError(model, exception);
         }
         return "redirect:/notes/my-notes";
+    }
+
+    private String handleNoteCreationError(Model model, Exception exception) {
+        model.addAttribute("error", exception.getMessage());
+        return "note/create-note";
     }
 
     @GetMapping("/delete/{id}")
@@ -96,16 +86,14 @@ class NoteController {
         return "redirect:/notes/my-notes";
     }
 
-
     @GetMapping("/edit/{id}")
-    String showEditPage(@PathVariable Long id, Model model, @AuthenticationPrincipal User user) {
+    public String showEditPage(@PathVariable Long id, Model model, @AuthenticationPrincipal User user) {
         try {
             final var note = noteUseCases.getNoteToEdit(id, user);
             model.addAttribute("updateNoteDto", new UpdateNoteDto(note.title(), note.content(), null, note.isPublic()));
             model.addAttribute("noteId", id);
         } catch (IllegalArgumentException exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "redirect:/notes/my-notes?error=" + exception.getMessage();
+            return handleNotesError(model, exception);
         }
         return "note/edit-note";
     }
@@ -113,17 +101,39 @@ class NoteController {
     @PostMapping("/update/{id}")
     String updateNote(@PathVariable Long id, @Valid UpdateNoteDto updateNoteDto, BindingResult bindingResult, @AuthenticationPrincipal User user, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("title", bindingResult.getAllErrors().get(0).getDefaultMessage());
-            redirectAttributes.addFlashAttribute("updateNoteDto", updateNoteDto);
-            return "redirect:/notes/edit/{id}";
+            return handleUpdateNoteValidationError(id, updateNoteDto, bindingResult, redirectAttributes);
         }
         try {
             noteUseCases.updateNote(id, updateNoteDto, user);
         } catch (Exception exception) {
-            model.addAttribute("error", exception.getMessage());
-            return "note/edit-note";
+            return handleNoteUpdateError(model, exception);
         }
         return "redirect:/notes/my-notes";
+    }
+
+    private String handleEncryptDecryptSuccess(String referer) {
+        return referer.contains("/notes/public-notes") ? "redirect:/notes/public-notes" : "redirect:/notes/my-notes";
+    }
+
+    private String handleEncryptDecryptError(Model model, Exception exception, String referer) {
+        model.addAttribute("error", exception.getMessage());
+        return referer.contains("/notes/my-notes") ? "redirect:/notes/my-notes?error=" + exception.getMessage() : "redirect:/notes/public-notes?error=" + exception.getMessage();
+    }
+
+    private String handleNotesError(Model model, IllegalArgumentException exception) {
+        model.addAttribute("error", exception.getMessage());
+        return "redirect:" + "/notes/my-notes" + "?error=" + exception.getMessage();
+    }
+
+    private String handleUpdateNoteValidationError(Long id, UpdateNoteDto updateNoteDto, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("title", bindingResult.getAllErrors().get(0).getDefaultMessage());
+        redirectAttributes.addFlashAttribute("updateNoteDto", updateNoteDto);
+        return "redirect:/notes/edit/{id}";
+    }
+
+    private String handleNoteUpdateError(Model model, Exception exception) {
+        model.addAttribute("error", exception.getMessage());
+        return "note/edit-note";
     }
 
 }

@@ -1,11 +1,10 @@
 package com.notesapp.notesapp.dto;
 
 import lombok.Builder;
-import lombok.extern.jackson.Jacksonized;
 
 @Builder
-@Jacksonized
-public record NoteDto(
+
+public record UserNoteDto(
         Long noteId,
         String title,
         String content,

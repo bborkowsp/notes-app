@@ -34,7 +34,6 @@ class NoteEncryptionService {
     private static final int KEY_LENGTH = 32;
     private static final int ITERATIONS = 65535;
 
-
     private static SecretKey getAESKeyFromPassword(char[] password, byte[] salt)
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");

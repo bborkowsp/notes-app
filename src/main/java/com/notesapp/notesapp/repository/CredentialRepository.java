@@ -23,7 +23,6 @@ public class CredentialRepository implements ICredentialRepository {
     @Override
     public void saveUserCredentials(String username, String secretKey, int verificationCode, List<Integer> scratchCodes) {
         TotpCredentials totpCredentials = createUserTotpCredentials(secretKey, verificationCode, scratchCodes);
-
         userRepository.findByUsername(username).ifPresent(user -> {
             user.setCredentials(totpCredentials);
             userRepository.save(user);

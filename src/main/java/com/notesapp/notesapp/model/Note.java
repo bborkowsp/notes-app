@@ -1,6 +1,7 @@
 package com.notesapp.notesapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Data
@@ -20,9 +21,11 @@ public class Note {
     private String content;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private Boolean isEncrypted;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Exclude
     private Boolean isPublic;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,14 +34,13 @@ public class Note {
     @Column(nullable = false)
     @EqualsAndHashCode.Exclude
     private String password;
-
-
-    public Note(String title, String content, User user, String password, Boolean aPublic, boolean isEncrypted) {
+    
+    public Note(@NonNull String title, @NonNull String content, @NonNull User user, @NonNull String password, @NonNull Boolean isPublic, @NotNull boolean isEncrypted) {
         this.title = title;
         this.content = content;
         this.author = user;
         this.password = password;
-        this.isPublic = aPublic;
+        this.isPublic = isPublic;
         this.isEncrypted = isEncrypted;
     }
 }

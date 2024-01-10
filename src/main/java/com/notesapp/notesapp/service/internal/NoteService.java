@@ -25,7 +25,7 @@ class NoteService implements NoteUseCases {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<NoteDto> getAllUserNotes(User user) {
+    public List<UserNoteDto> getAllUserNotes(User user) {
         return noteRepository.findAllByAuthor(user).stream()
                 .map(noteMapper::mapNoteToNoteDto)
                 .toList();
@@ -95,7 +95,7 @@ class NoteService implements NoteUseCases {
     }
 
     @Override
-    public NoteDto getNoteToEdit(Long id, User user) {
+    public UserNoteDto getNoteToEdit(Long id, User user) {
         final var note = noteRepository.findById(id).orElseThrow();
         validateNoteIsNotEncrypted(note);
         return noteMapper.mapNoteToNoteDto(note);

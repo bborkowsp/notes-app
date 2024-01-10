@@ -42,15 +42,10 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void setCredentials(TotpCredentials totpCredentials) {
-        this.totpCredentials = totpCredentials;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of();
     }
-
 
     @Override
     public String getPassword() {
@@ -85,4 +80,9 @@ public class User implements UserDetails {
     public TotpCredentials getCredentials() {
         return this.totpCredentials;
     }
+
+    public void setCredentials(TotpCredentials totpCredentials) {
+        this.totpCredentials = totpCredentials;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.notesapp.notesapp.config;
 
+import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.AccessLevel;
@@ -46,9 +47,8 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     }
 
     private void delayLogin() {
-        Random random = new Random();
         try {
-            int randomDuration = random.nextInt(1000) + 300;
+            int randomDuration = new Random().nextInt(1000) + 300;
             Thread.sleep(randomDuration);
         } catch (InterruptedException exception) {
             throw new RuntimeException(exception);
@@ -56,8 +56,7 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     }
 
     private void validateVerificationCode(Authentication authentication) {
-        final var user = userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+        User user = getUserFromAuthentication(authentication);
         String verificationCode = ((CustomWebAuthenticationDetails) authentication.getDetails()).getVerificationCode();
         try {
             authUseCases.checkVerificationCodesMatch(user.getUsername(), Integer.valueOf(verificationCode));
@@ -65,4 +64,11 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
             throw new BadCredentialsException(exception.getMessage());
         }
     }
+
+    private User getUserFromAuthentication(Authentication authentication) {
+        String username = authentication.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+    }
+    
 }

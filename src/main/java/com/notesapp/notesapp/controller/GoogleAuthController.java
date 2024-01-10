@@ -1,5 +1,6 @@
 package com.notesapp.notesapp.controller;
 
+
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -27,23 +28,26 @@ class GoogleAuthController {
 
     @GetMapping("/qrcode/{username}")
     public String showQRCodePage(@PathVariable String username, Model model) throws WriterException, IOException {
-        final GoogleAuthenticatorKey key = googleAuthenticator.createCredentials(username);
-
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-
-        final var otpAuthTotpURL = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("notes-app", username, key);
-
-        BitMatrix bitMatrix = qrCodeWriter.encode(otpAuthTotpURL, BarcodeFormat.QR_CODE, 200, 200);
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", byteArrayOutputStream);
-        byte[] bytes = byteArrayOutputStream.toByteArray();
-        String imageBase64 = Base64.encodeBase64String(bytes);
+        GoogleAuthenticatorKey key = googleAuthenticator.createCredentials(username);
+        String imageBase64 = generateQRCodeImageBase64(key, username);
 
         model.addAttribute("imageBase64", imageBase64);
         model.addAttribute("username", username);
 
         return "qrcode";
+    }
+
+    private String generateQRCodeImageBase64(GoogleAuthenticatorKey key, String username) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        String otpAuthTotpURL = GoogleAuthenticatorQRGenerator.getOtpAuthTotpURL("notes-app", username, key);
+
+        BitMatrix bitMatrix = qrCodeWriter.encode(otpAuthTotpURL, BarcodeFormat.QR_CODE, 200, 200);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", byteArrayOutputStream);
+
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeBase64String(bytes);
     }
 
 }
