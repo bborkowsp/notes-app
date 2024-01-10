@@ -59,16 +59,21 @@ class NoteService implements NoteUseCases {
         final var note = noteRepository.findById(encryptDecryptNoteDto.getEncryptDecryptNoteId()).orElseThrow();
         validateUserIsNoteAuthor(user, note);
         final var password = sanitizeHtml(encryptDecryptNoteDto.getPassword());
+        System.out.println("encryptOrDecrypt------------------");
+        System.out.println(password);
         if (note.getIsEncrypted()) {
             validatePasswordIsCorrect(password, note);
-            final var decryptedTitle = NoteEncryptionService.decrypt(password, note.getTitle());
-            final var decryptedContent = NoteEncryptionService.decrypt(password, note.getContent());
+            final var decryptedTitle = NoteEncryptionService.decrypt(note.getTitle(), password);
+            System.out.println(decryptedTitle);
+            final var decryptedContent = NoteEncryptionService.decrypt(note.getContent(), password);
             note.setTitle(decryptedTitle);
             note.setContent(decryptedContent);
             note.setIsEncrypted(false);
         } else {
             final var encryptedTitle = NoteEncryptionService.encrypt(password, note.getTitle());
             final var encryptedContent = NoteEncryptionService.encrypt(password, note.getContent());
+            final var encodedPassword = passwordEncoder.encode(password);
+            note.setPassword(encodedPassword);
             note.setTitle(encryptedTitle);
             note.setContent(encryptedContent);
             note.setIsEncrypted(true);
@@ -76,6 +81,10 @@ class NoteService implements NoteUseCases {
     }
 
     private void validatePasswordIsCorrect(String password, Note note) {
+        System.out.println("validatePasswordIsCorrect------------------");
+        System.out.println(note.getPassword());
+        System.out.println(password);
+        System.out.println(passwordEncoder.encode(password));
         if (!passwordEncoder.matches(password, note.getPassword())) {
             throw new IllegalArgumentException("Incorrect password");
         }

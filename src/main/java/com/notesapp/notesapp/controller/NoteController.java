@@ -59,8 +59,6 @@ class NoteController {
 
     @PostMapping("/encrypt-decrypt")
     String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult) {
-        System.out.println("-----------------");
-        System.out.println(encryptDecryptNoteDto.getEncryptDecryptNoteId());
         try {
             noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
             return "redirect:/notes/my-notes";
