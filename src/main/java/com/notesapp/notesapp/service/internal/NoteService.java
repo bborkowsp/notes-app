@@ -56,9 +56,9 @@ class NoteService implements NoteUseCases {
 
     @Override
     public void encryptOrDecrypt(EncryptDecryptNoteDto encryptDecryptNoteDto, User user) throws Exception {
-        final var note = noteRepository.findById(encryptDecryptNoteDto.getEncryptDecryptNoteId()).orElseThrow();
+        final var note = noteRepository.findById(encryptDecryptNoteDto.encryptDecryptNoteId()).orElseThrow();
         validateUserIsNoteAuthor(user, note);
-        final var password = sanitizeHtml(encryptDecryptNoteDto.getPassword());
+        final var password = sanitizeHtml(encryptDecryptNoteDto.password());
 
         if (note.getIsEncrypted()) {
             decryptNote(note, password);
@@ -70,7 +70,6 @@ class NoteService implements NoteUseCases {
     private void decryptNote(Note note, String password) throws Exception {
         validatePasswordIsCorrect(password, note);
         final var decryptedTitle = NoteEncryptionService.decrypt(note.getTitle(), password);
-        System.out.println(decryptedTitle);
         final var decryptedContent = NoteEncryptionService.decrypt(note.getContent(), password);
         updateNoteAfterDecryption(note, decryptedTitle, decryptedContent);
     }
@@ -98,7 +97,7 @@ class NoteService implements NoteUseCases {
 
     private void validatePasswordIsCorrect(String password, Note note) {
         if (!passwordEncoder.matches(password, note.getPassword())) {
-            throw new IllegalArgumentException("Incorrect password");
+            throw new IllegalArgumentException("Incorrect decryption password");
         }
     }
 

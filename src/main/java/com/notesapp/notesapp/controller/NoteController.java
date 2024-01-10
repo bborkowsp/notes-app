@@ -58,14 +58,14 @@ class NoteController {
     }
 
     @PostMapping("/encrypt-decrypt")
-    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult) {
+    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, BindingResult bindingResult, Model model) {
         try {
             noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
             return "redirect:/notes/my-notes";
         } catch (Exception exception) {
+            model.addAttribute("error", exception.getMessage());
             return "redirect:/notes/my-notes?error=" + exception.getMessage();
         }
-
     }
 
 }
