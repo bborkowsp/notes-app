@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 class NoteMapperService implements NoteMapper {
 
     @Override
-    public NoteDto mapNoteToUserNoteDto(Note note) {
+    public NoteDto mapNoteToNoteDto(Note note) {
         return NoteDto.builder()
                 .noteId(note.getId())
                 .title(note.getTitle())

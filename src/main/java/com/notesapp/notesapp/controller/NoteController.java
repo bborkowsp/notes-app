@@ -2,6 +2,7 @@ package com.notesapp.notesapp.controller;
 
 import com.notesapp.notesapp.dto.CreateNoteDto;
 import com.notesapp.notesapp.dto.EncryptDecryptNoteDto;
+import com.notesapp.notesapp.dto.UpdateNoteDto;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.service.NoteUseCases;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/notes")
@@ -66,6 +68,35 @@ class NoteController {
             model.addAttribute("error", exception.getMessage());
             return "redirect:/notes/my-notes?error=" + exception.getMessage();
         }
+    }
+
+    @GetMapping("/edit/{id}")
+    String showEditPage(@PathVariable Long id, Model model, @AuthenticationPrincipal User user) {
+        try {
+            final var note = noteUseCases.getNoteToEdit(id, user);
+            model.addAttribute("updateNoteDto", new UpdateNoteDto(note.title(), note.content(), null, note.isPublic()));
+            model.addAttribute("noteId", id);
+        } catch (IllegalArgumentException exception) {
+            model.addAttribute("error", exception.getMessage());
+            return "redirect:/notes/my-notes?error=" + exception.getMessage();
+        }
+        return "user/edit-note";
+    }
+
+    @PostMapping("/update/{id}")
+    String updateNote(@PathVariable Long id, @Valid UpdateNoteDto updateNoteDto, BindingResult bindingResult, @AuthenticationPrincipal User user, RedirectAttributes redirectAttributes, Model model) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("title", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            redirectAttributes.addFlashAttribute("updateNoteDto", updateNoteDto);
+            return "redirect:/notes/edit/{id}";
+        }
+        try {
+            noteUseCases.updateNote(id, updateNoteDto, user);
+        } catch (Exception exception) {
+            model.addAttribute("error", exception.getMessage());
+            return "user/edit-note";
+        }
+        return "redirect:/notes/my-notes";
     }
 
 }

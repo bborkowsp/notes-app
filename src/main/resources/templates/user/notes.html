@@ -6,6 +6,7 @@
 
 <div class="container mt-4">
     <h2>My Notes</h2>
+    <div class="alert alert-danger" role="alert" th:if="${param.error}" th:text="${param.error}"></div>
     <div th:each="note, noteIndex : ${notes}">
         <div class="card my-2">
             <div class="card-body">
@@ -20,8 +21,7 @@
                     <span th:if="${note.isPublic}">Public</span>
                     <span th:if="${!note.isPublic}">Private</span>
                 </p>
-                <button type="button" class="btn btn-primary" th:onclick="'editNote(' + ${note.noteId} + ')'">Edit
-                </button>
+                <a class="btn btn-primary" th:href="@{/notes/edit/{id}(id=${note.noteId})}">Edit</a>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop" data-note-noteId="${note.noteId}"
                         th:onclick="'setNoteId(' + ${note.noteId} + '); setTitle(' + ${note.isEncrypted} + ')'">

@@ -3,6 +3,7 @@ package com.notesapp.notesapp.service.internal;
 import com.notesapp.notesapp.dto.CreateNoteDto;
 import com.notesapp.notesapp.dto.EncryptDecryptNoteDto;
 import com.notesapp.notesapp.dto.NoteDto;
+import com.notesapp.notesapp.dto.UpdateNoteDto;
 import com.notesapp.notesapp.mapper.NoteMapper;
 import com.notesapp.notesapp.model.Note;
 import com.notesapp.notesapp.model.User;
@@ -29,20 +30,44 @@ class NoteService implements NoteUseCases {
     @Override
     public List<NoteDto> getAllUserNotes(User user) {
         return noteRepository.findAllByAuthor(user).stream()
-                .map(noteMapper::mapNoteToUserNoteDto)
+                .map(noteMapper::mapNoteToNoteDto)
                 .toList();
     }
 
     @Override
     public void createNote(CreateNoteDto createNoteDto, User user) throws Exception {
         final var sanitizedTitle = sanitizeHtml(createNoteDto.title());
+        System.out.println("--------------------");
+        System.out.println(createNoteDto.content());
         final var sanitizedContent = sanitizeHtml(createNoteDto.content());
+        System.out.println("--------------------");
+        System.out.println(sanitizedContent);
         final var isEncrypted = createNoteDto.password() != null && !createNoteDto.password().isBlank();
         final var password = sanitizeHtml(createNoteDto.password());
         final var title = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedTitle) : sanitizedTitle;
         final var content = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedContent) : sanitizedContent;
         final var encodedPassword = passwordEncoder.encode(password);
         final var note = new Note(title, content, user, encodedPassword, createNoteDto.isPublic(), isEncrypted);
+        validateNoteIsNotEncryptedAndPublic(note);
+        noteRepository.save(note);
+    }
+
+    @Override
+    public void updateNote(Long id, UpdateNoteDto updateNoteDto, User user) throws Exception {
+        final var note = noteRepository.findById(id).orElseThrow();
+        validateUserIsNoteAuthor(user, note);
+        final var sanitizedTitle = sanitizeHtml(updateNoteDto.title());
+        final var sanitizedContent = sanitizeHtml(updateNoteDto.content());
+        final var isEncrypted = updateNoteDto.password() != null && !updateNoteDto.password().isBlank();
+        final var password = sanitizeHtml(updateNoteDto.password());
+        final var title = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedTitle) : sanitizedTitle;
+        final var content = isEncrypted ? NoteEncryptionService.encrypt(password, sanitizedContent) : sanitizedContent;
+        final var encodedPassword = passwordEncoder.encode(password);
+        note.setTitle(title);
+        note.setContent(content);
+        note.setPassword(encodedPassword);
+        note.setIsPublic(updateNoteDto.isPublic());
+        note.setIsEncrypted(isEncrypted);
         validateNoteIsNotEncryptedAndPublic(note);
         noteRepository.save(note);
     }
@@ -56,6 +81,7 @@ class NoteService implements NoteUseCases {
 
     @Override
     public void encryptOrDecrypt(EncryptDecryptNoteDto encryptDecryptNoteDto, User user) throws Exception {
+        validatePasswordLength(encryptDecryptNoteDto.password());
         final var note = noteRepository.findById(encryptDecryptNoteDto.encryptDecryptNoteId()).orElseThrow();
         validateUserIsNoteAuthor(user, note);
         final var password = sanitizeHtml(encryptDecryptNoteDto.password());
@@ -64,6 +90,44 @@ class NoteService implements NoteUseCases {
             decryptNote(note, password);
         } else {
             encryptNote(note, password);
+        }
+    }
+
+    @Override
+    public NoteDto getNoteToEdit(Long id, User user) {
+        final var note = noteRepository.findById(id).orElseThrow();
+        validateNoteIsNotEncrypted(note);
+        return noteMapper.mapNoteToNoteDto(note);
+    }
+
+
+    private void validateNoteIsNotEncrypted(Note note) {
+        if (note.getIsEncrypted()) {
+            throw new IllegalArgumentException("Cannot edit encrypted note");
+        }
+    }
+
+    private void validatePasswordLength(String password) {
+        if (password.length() > 120 || password.length() < 8) {
+            throw new IllegalArgumentException("Password must be between 8 and 120 characters long");
+        }
+    }
+
+    private void validatePasswordIsCorrect(String password, Note note) {
+        if (!passwordEncoder.matches(password, note.getPassword())) {
+            throw new IllegalArgumentException("Incorrect decryption password");
+        }
+    }
+
+    private void validateUserIsNoteAuthor(User user, Note note) {
+        if (!note.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("User is not authorized to perform this action");
+        }
+    }
+
+    private void validateNoteIsNotEncryptedAndPublic(Note note) {
+        if (note.getIsPublic() && note.getIsEncrypted()) {
+            throw new IllegalArgumentException("Cannot create public encrypted note");
         }
     }
 
@@ -94,29 +158,8 @@ class NoteService implements NoteUseCases {
         note.setIsEncrypted(true);
     }
 
-
-    private void validatePasswordIsCorrect(String password, Note note) {
-        if (!passwordEncoder.matches(password, note.getPassword())) {
-            throw new IllegalArgumentException("Incorrect decryption password");
-        }
-    }
-
-    private void validateUserIsNoteAuthor(User user, Note note) {
-        if (!note.getAuthor().equals(user)) {
-            throw new IllegalArgumentException("User is not authorized to perform this action");
-        }
-    }
-
-    private void validateNoteIsNotEncryptedAndPublic(Note note) {
-        if (note.getIsPublic() && note.getIsEncrypted()) {
-            throw new IllegalArgumentException("Cannot create public encrypted note");
-        }
-    }
-
     private String sanitizeHtml(String htmlText) {
         final var policy = Sanitizers.FORMATTING.and(Sanitizers.LINKS).and(Sanitizers.IMAGES).and(Sanitizers.BLOCKS);
         return policy.sanitize(htmlText);
     }
-
-
 }
