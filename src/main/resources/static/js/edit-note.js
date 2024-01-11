@@ -11,7 +11,7 @@ var quill = new Quill('#editor', {
 });
 
 quill.on('text-change', function () {
-    var content = quill.root.innerText;
+    var content = quill.root.innerHTML;
     $('#contentInput').val(content);
 });
 
@@ -23,7 +23,7 @@ form.onsubmit = function () {
         return true;
     }
 
-    content.value = quill.root.innerText;
+    content.value = quill.root.innerHTML;
     return true;
 };
 

@@ -58,10 +58,19 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     private void validateVerificationCode(Authentication authentication) {
         User user = getUserFromAuthentication(authentication);
         String verificationCode = ((CustomWebAuthenticationDetails) authentication.getDetails()).getVerificationCode();
+        verifyVerificationCodeIsANumber(verificationCode);
         try {
             authUseCases.checkVerificationCodesMatch(user.getUsername(), Integer.valueOf(verificationCode));
         } catch (IllegalStateException exception) {
             throw new BadCredentialsException(exception.getMessage());
+        }
+    }
+
+    private void verifyVerificationCodeIsANumber(String verificationCode) {
+        try {
+            Integer.valueOf(verificationCode);
+        } catch (NumberFormatException exception) {
+            throw new BadCredentialsException("Invalid credentials");
         }
     }
 
@@ -70,5 +79,5 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
     }
-    
+
 }
