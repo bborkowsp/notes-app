@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Constraint(validatedBy = CustomPasswordValidator.class)
 public @interface ValidPassword {
-    int MAX_PASSWORD_LENGTH = 120;
+    int MAX_PASSWORD_LENGTH = 128;
     int MIN_PASSWORD_LENGTH = 8;
 
     String message() default "Invalid Password";

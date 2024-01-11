@@ -26,7 +26,7 @@ public record RegisterUserDto(
         String password,
 
         @NotBlank
-        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must be no more than 120 characters in length.")
+        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must be no more than" + MAX_PASSWORD_LENGTH + "characters in length.")
         String matchingPassword
 ) {
 }

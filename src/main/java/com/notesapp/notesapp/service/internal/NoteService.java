@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
+import static com.notesapp.notesapp.validation.ValidPassword.MIN_PASSWORD_LENGTH;
+
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -109,8 +112,8 @@ class NoteService implements NoteUseCases {
     }
 
     private void validatePasswordLength(String password) {
-        if (password.length() > 120 || password.length() < 8) {
-            throw new IllegalArgumentException("Password must be between 8 and 120 characters long");
+        if (password.length() > MAX_PASSWORD_LENGTH || password.length() < MIN_PASSWORD_LENGTH) {
+            throw new IllegalArgumentException("Password must be between " + MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " characters long");
         }
     }
 

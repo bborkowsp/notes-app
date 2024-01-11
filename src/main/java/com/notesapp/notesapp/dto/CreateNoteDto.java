@@ -14,7 +14,7 @@ public record CreateNoteDto(
         @Size(max = 5000, message = "Content must not have more than 5000 characters")
         String content,
 
-        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must not have more than 120 characters")
+        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must not have more than" + MAX_PASSWORD_LENGTH + "characters")
         String password,
 
         Boolean isPublic
