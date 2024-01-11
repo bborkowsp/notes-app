@@ -1,8 +1,7 @@
 var toolbarOptions = [
-    ['clean'],
-    ['link', 'image'],
-    ['bold', 'italic', 'underline'],
     [{'header': [1, 2, 3, 4, 5, 6, false]}],
+    ['bold', 'italic', 'underline'],
+    ['image']
 ];
 
 var quill = new Quill('#editor', {
