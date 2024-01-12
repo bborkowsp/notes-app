@@ -1,14 +1,12 @@
 package com.notesapp.notesapp.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,13 +25,16 @@ class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService userDetailsService;
     private final CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+    private final CustomAuthenticationProvider authenticationProvider;
+    private final Cache<String, Integer> unsuccessfulLoginAttemptsCache;
 
-    @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .authenticationProvider(authProvider())
-                .build();
-    }
+
+//    @Bean
+//    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+//        return http.getSharedObject(AuthenticationManagerBuilder.class)
+//                .authenticationProvider(authProvider())
+//                .build();
+//    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -43,10 +44,13 @@ class SecurityConfig {
                         .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
                         .anyRequest().authenticated()
                 )
+                .authenticationProvider(authenticationProvider)
                 .formLogin((formLogin) -> formLogin.loginPage("/login")
-                        .defaultSuccessUrl("/notes/my-notes")
-                        .failureUrl("/login?error=true")
                         .authenticationDetailsSource(authenticationDetailsSource)
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/notes/my-notes", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -56,12 +60,12 @@ class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
-        final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider(userRepository, authUseCases);
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
-    }
+//    @Bean
+//    public DaoAuthenticationProvider authProvider() {
+//        final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider(userRepository, authUseCases, unsuccessfulLoginAttemptsCache);
+//        authProvider.setUserDetailsService(userDetailsService);
+//        authProvider.setPasswordEncoder(passwordEncoder);
+//        return authProvider;
+//    }
 
 }

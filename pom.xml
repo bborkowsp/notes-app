@@ -15,13 +15,14 @@
     <description>notes-app</description>
     <properties>
         <java.version>17</java.version>
-        <spring.boot.version>3.2.0</spring.boot.version>
         <jjwt.version>0.12.3</jjwt.version>
-        <googleauth.version>1.5.0</googleauth.version>
         <zxing.version>3.5.2</zxing.version>
-        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
-        <validation-api.version>3.1.0-M1</validation-api.version>
         <passay.version>1.6.4</passay.version>
+        <caffeine.version>3.1.8</caffeine.version>
+        <googleauth.version>1.5.0</googleauth.version>
+        <spring.boot.version>3.2.0</spring.boot.version>
+        <validation-api.version>3.1.0-M1</validation-api.version>
+        <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
         <owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
     </properties>
     <dependencies>
@@ -137,6 +138,11 @@
             <artifactId>spring-boot-docker-compose</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
         </dependency>
     </dependencies>
     <build>
