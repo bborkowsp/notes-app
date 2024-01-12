@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -20,16 +19,7 @@ class AuthController {
     private final AuthUseCases authUseCases;
 
     @GetMapping("/login")
-    public String loginPage(@RequestParam(name = "error", required = false) String error, Model model) {
-        System.out.println(error);
-        if (error != null) {
-            if (error.equals("maxAttempts")) {
-                System.out.println("maxAttempts");
-                model.addAttribute("errorMessage", "You have reached the maximum number of unsuccessful login attempts. Please try again later.");
-            } else {
-                model.addAttribute("errorMessage", "Invalid login credentials");
-            }
-        }
+    public String loginPage() {
         return "login";
     }
 

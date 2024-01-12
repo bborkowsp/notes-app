@@ -27,7 +27,7 @@ import java.util.Random;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private static final int MAX_LOGIN_ATTEMPTS = 2;
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
 
     private final UserRepository userRepository;
     private final AuthUseCases authUseCases;
