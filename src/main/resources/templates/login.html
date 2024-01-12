@@ -1,48 +1,47 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
-<head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{base.html :: head(title='Create Note')}"></head>
+
 <body>
-<section>
-    <div class="container  p-5">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="card paint-card">
-                    <div class="card-body">
-                        <h4 class="form-signin-heading text-center">Sign in</h4>
-                        <form class="form-signin" method="post" th:action="@{/login}">
+<nav th:replace="~{base.html :: nav}"></nav>
+<div class="container  p-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card paint-card">
+                <div class="card-body">
+                    <h4 class="form-signin-heading text-center">Sign in</h4>
+                    <form class="form-signin" method="post" th:action="@{/login}">
 
-                            <div th:if="${param.error != null}" class="alert alert-danger">
-                                Invalid login credentials
-                            </div>
+                        <div th:if="${param.error != null}" class="alert alert-danger">
+                            Invalid login credentials
+                        </div>
 
-                            <div th:if="${param.logout}" class="alert alert-success"> Logout Successfully</div>
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" id="username" name="username" class="form-control" required
-                                       autofocus>
-                            </div>
-                            <div class="form-group mt-2">
-                                <label>Password</label>
-                                <input type="password" id="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="form-group mt-2">
-                                <label>Google verification code</label>
-                                <input type='password' id="verificationCode" name='verificationCode'
-                                       class="form-control" required/>
-                            </div>
-                            <button class="btn btn-primary col-md-12 mt-3" type="submit">Sign in</button>
-                            <div class="text-center mt-2">
-                                <a href="/register">Create Account</a>
-                            </div>
-                        </form>
-                    </div>
+                        <div th:if="${param.logout}" class="alert alert-success"> Logout Successfully</div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="username" name="username" class="form-control" required
+                                   autofocus>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label>Password</label>
+                            <input type="password" id="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label>Google verification code</label>
+                            <input type='password' id="verificationCode" name='verificationCode'
+                                   class="form-control" required/>
+                        </div>
+                        <button class="btn btn-primary col-md-12 mt-3" type="submit">Sign in</button>
+                        <div class="text-center mt-2">
+                            <a href="/register">Create Account</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</section>
+</div>
+<th:block th:replace="~{base.html :: scripts}"></th:block>
 </body>
 </html>

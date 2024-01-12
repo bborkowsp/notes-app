@@ -1,140 +1,76 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{base.html :: head(title='Register')}">
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
+
 </head>
+
 <body>
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="card mt-2 paint-card">
-                    <h1 class="text-center">Register Here</h1>
-                    <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
-                    <div class="card-body">
-                        <form role="form" th:action="@{/register}" th:object="${registerUserDto}" method="post">
-                            <div class="form-group mt-2">
-                                <label>Enter Username</label>
-                                <td><input type="text" th:field="*{username}" class="form-control" required="required"/>
-                                </td>
-                                <span th:if="${#fields.hasErrors('username')}" class="text-danger"
-                                      th:errors="*{username}">Username Error</span>
-                            </div>
+<nav th:replace="~{base.html :: nav}"></nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card mt-2 paint-card">
+                <h1 class="text-center">Register Here</h1>
+                <div class="alert alert-danger" role="alert" th:if="${error}" th:text="${error}"></div>
+                <div class="card-body">
+                    <form role="form" th:action="@{/register}" th:object="${registerUserDto}" method="post">
+                        <div class="form-group mt-2">
+                            <label>Enter Username</label>
+                            <td><input type="text" th:field="*{username}" class="form-control" required="required"/>
+                            </td>
+                            <span th:if="${#fields.hasErrors('username')}" class="text-danger"
+                                  th:errors="*{username}">Username Error</span>
+                        </div>
 
-                            <div class="form-group mt-2">
-                                <label>Enter Email</label>
-                                <td><input type="text" th:field="*{email}" class="form-control"
-                                           required="required"/>
-                                </td>
-                                <span th:if="${#fields.hasErrors('email')}" class="text-danger"
-                                      th:errors="*{email}">Email Error</span>
-                            </div>
+                        <div class="form-group mt-2">
+                            <label>Enter Email</label>
+                            <td><input type="text" th:field="*{email}" class="form-control"
+                                       required="required"/>
+                            </td>
+                            <span th:if="${#fields.hasErrors('email')}" class="text-danger"
+                                  th:errors="*{email}">Email Error</span>
+                        </div>
 
-                            <div class="form-group mt-2">
-                                <label>Enter Password</label>
-                                <td>
-                                    <input type="password" th:field="*{password}" class="form-control" id="password"
-                                           required="required"/>
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" id="entropy-progress-bar"></div>
-                                    </div>
-                                </td>
+                        <div class="form-group mt-2">
+                            <label>Enter Password</label>
+                            <td>
+                                <input type="password" th:field="*{password}" class="form-control" id="password"
+                                       required="required"/>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" id="entropy-progress-bar"></div>
+                                </div>
+                            </td>
+                            <div id="entropy-container">
                                 <p id="entropy-text"></p>
-                                <span th:if="${#fields.hasErrors('password')}" class="text-danger"
-                                      th:errors="*{password}">Password Error</span>
+                                <p id="entropy-info"></p>
                             </div>
+                            <span th:if="${#fields.hasErrors('password')}" class="text-danger"
+                                  th:errors="*{password}">Password Error</span>
+                        </div>
 
-                            <div class="form-group mt-2">
-                                <label>Confirm password</label>
-                                <td><input type="password" th:field="*{matchingPassword}" class="form-control"
-                                           required="required"/>
-                                </td>
-                                <span th:if="${#fields.hasErrors('matchingPassword')}" class="text-danger"
-                                      th:errors="*{matchingPassword}">Matching Password Error</span>
-                            </div>
-                            <div class="text-center mt-3">
-                                <button class="btn bg-primary text-white">Submit</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="form-group mt-2">
+                            <label>Confirm password</label>
+                            <td><input type="password" th:field="*{matchingPassword}" class="form-control"
+                                       required="required"/>
+                            </td>
+                            <span th:if="${#fields.hasErrors('matchingPassword')}" class="text-danger"
+                                  th:errors="*{matchingPassword}">Matching Password Error</span>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn bg-primary text-white">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-        const stdCharsets = [
-            {
-                name: 'lowercase',
-                re: /[a-z]/, // abcdefghijklmnopqrstuvwxyz
-                length: 26,
-            },
-            {
-                name: 'uppercase',
-                re: /[A-Z]/, // ABCDEFGHIJKLMNOPQRSTUVWXYZ
-                length: 26,
-            },
-            {
-                name: 'numbers',
-                re: /[0-9]/, // 1234567890
-                length: 10,
-            },
-            {
-                name: 'symbols',
-                re: /[^a-zA-Z0-9]/, // !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ (and any other)
-                length: 33,
-            },
-        ];
+</div>
+<th:block th:replace="~{base.html :: scripts}"></th:block>
+<script th:src="@{/js/password-entropy.js}" type="text/javascript"></script>
+<script>
 
-        // const calcCharsetLengthWith = (charsets) => (string) =>
-        //     charsets.reduce((length, charset) => length + (charset.re.test(string) ? charset.length : 0), 0);
-        //
-        // const calcCharsetLength = calcCharsetLengthWith(stdCharsets);
-        //
-        // const calculatePasswordEntropy = (string) => (string ? calcEntropy(calcCharsetLength(string), string.length) : 0);
-        function calculateEntropy(password) {
-            var charsetSize = stdCharsets.reduce(function (length, charset) {
-                return length + (charset.re.test(password) ? charset.length : 0);
-            }, 0)
-            return Math.round(password.length * Math.log(charsetSize) / Math.LN2);
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-            var entropyProgressBar = document.getElementById('entropy-progress-bar');
-            var entropyText = document.getElementById('entropy-text');
-            var passwordInput = document.getElementById('password');
-
-
-            if (entropyProgressBar !== null && entropyText !== null && passwordInput !== null) {
-                passwordInput.oninput = function () {
-                    var password = passwordInput.value;
-
-                    if (password.length === 0) {
-                        entropyProgressBar.style.width = '0%';
-                        entropyText.innerText = '';
-                        return;
-                    }
-
-                    var entropy = calculateEntropy(password);
-                    var percentage = Math.min(100, entropy);
-                    entropyProgressBar.style.width = percentage + '%';
-
-                    if (percentage < 70) {
-                        entropyProgressBar.classList.add('bg-danger');
-                        entropyProgressBar.classList.remove('bg-success');
-                        entropyText.innerText = 'Weak';
-                    } else {
-                        entropyProgressBar.classList.add('bg-success');
-                        entropyProgressBar.classList.remove('bg-danger');
-                        entropyText.innerText = 'Strong';
-                    }
-                }
-            }
-        });
-
-    </script>
-</section>
-
+</script>
 </body>
 </html>

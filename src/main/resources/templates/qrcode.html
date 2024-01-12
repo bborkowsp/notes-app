@@ -1,23 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
-<head>
-    <meta charset="UTF-8">
-    <title>QrCode page</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{base.html :: head(title='Create Note')}"></head>
+
 <body>
-<section>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3 text-center">
-                <h1>Your QR Code</h1>
-                <img th:src="'data:image/png;base64,' + ${imageBase64}" alt="QR Code" class="mx-auto d-block">
-                <p>Scan the QR code using Google authenticator app.</p>
-                <p>Username: <span th:text="${username}"></span></p>
-                <a th:href="@{/login}" class="btn btn-primary mt-3">Go to Login</a>
-            </div>
+<nav th:replace="~{base.html :: nav}"></nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 text-center">
+            <h1>Your QR Code</h1>
+            <img th:src="'data:image/png;base64,' + ${imageBase64}" alt="QR Code" class="mx-auto d-block">
+            <p>Scan the QR code using Google authenticator app.</p>
+            <p>Username: <span th:text="${username}"></span></p>
+            <a th:href="@{/login}" class="btn btn-primary mt-3">Go to Login</a>
         </div>
     </div>
-</section>
-
+</div>
+<th:block th:replace="~{base.html :: scripts}"></th:block>
 </body>
 </html>

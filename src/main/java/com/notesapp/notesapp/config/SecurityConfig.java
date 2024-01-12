@@ -23,7 +23,7 @@ class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/css/**", "/register", "/qrcode/{username}").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/register", "/qrcode/{username}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

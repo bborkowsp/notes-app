@@ -1,14 +1,8 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base::layout(~{::section})}">
-<head>
-    <meta charset="UTF-8">
-    <title>Insert title here</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{base.html :: head(title='Create Note')}"></head>
 <body>
-<section>
-    <h1>Hello</h1>
-</section>
+<nav th:replace="~{base.html :: nav}"></nav>
+<th:block th:replace="~{base.html :: scripts}"></th:block>
 </body>
 </html>
