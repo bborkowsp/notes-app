@@ -8,7 +8,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -112,18 +111,15 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     private void incrementFailedLoginAttemptsCount() {
         final var request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         final var ipAddress = request.getRemoteAddr();
-        System.out.println("ipAddress = " + ipAddress);
         final var failedLoginAttemptsCount = getFailedLoginAttemptsCount() + 1;
         failedLoginAttemptsCache.put(ipAddress, failedLoginAttemptsCount);
     }
 
     private void checkIfReachedMaxFailedLoginAttemptsCount() {
         final var unsuccessfulLoginAttempts = getFailedLoginAttemptsCount();
-        System.out.println("unsuccessfulLoginAttempts = " + unsuccessfulLoginAttempts);
 
         if (unsuccessfulLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            System.out.println("unsuccessfulLoginAttempts = " + unsuccessfulLoginAttempts);
-            throw new BadCredentialsException("You have reached the maximum number of unsuccessful login attempts. Please try again later.", new LockedException("maxAttempts"));
+            throw new BadCredentialsException("You have reached the maximum number of unsuccessful login attempts. Please try again later.");
         }
     }
 
