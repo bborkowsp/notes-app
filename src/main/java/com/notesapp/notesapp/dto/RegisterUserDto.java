@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
+import static com.notesapp.notesapp.validation.ValidPassword.MIN_PASSWORD_LENGTH;
 
 
 public record RegisterUserDto(
@@ -26,7 +27,8 @@ public record RegisterUserDto(
         String password,
 
         @NotBlank
-        @Size(max = MAX_PASSWORD_LENGTH, message = "Password must be no more than" + MAX_PASSWORD_LENGTH + "characters in length.")
+        @Size(min = MIN_PASSWORD_LENGTH, max = MAX_PASSWORD_LENGTH,
+                message = "Password must be between " + MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " characters")
         String matchingPassword
 ) {
 }

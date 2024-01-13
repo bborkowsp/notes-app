@@ -25,7 +25,7 @@ class SecurityConfig {
                 .requiresChannel(requiresChannel -> requiresChannel
                         .anyRequest().requiresSecure())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/css/**", "/js/**", "/register", "/qrcode/{username}").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/register", "/qrcode/{username}", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
@@ -35,11 +35,11 @@ class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/notes/my-notes", true)
                         .failureUrl("/login?error=true")
-                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout=true")
-                        .permitAll()
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                 )
                 .build();
     }

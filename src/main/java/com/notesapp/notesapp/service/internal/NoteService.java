@@ -37,7 +37,7 @@ class NoteService implements NoteUseCases {
     @Override
     public List<PublicNoteDto> getAllPublicNotes(User user) {
         return noteRepository.findAllByIsPublicIsTrue().stream()
-                .filter(note -> !note.getAuthor().equals(user))
+                .filter(note -> !note.getIsEncrypted())
                 .map(noteMapper::mapNoteToPublicNoteDto)
                 .toList();
     }
@@ -101,6 +101,7 @@ class NoteService implements NoteUseCases {
     public UserNoteDto getNoteToEdit(Long id, User user) {
         final var note = noteRepository.findById(id).orElseThrow();
         validateNoteIsNotEncrypted(note);
+        validateUserIsNoteAuthor(user, note);
         return noteMapper.mapNoteToNoteDto(note);
     }
 
