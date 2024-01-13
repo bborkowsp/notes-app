@@ -3,7 +3,6 @@
 
 <head th:replace="~{base.html :: head(title='Register')}">
     <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
-
 </head>
 
 <body>
@@ -43,7 +42,6 @@
                                 </div>
                             </td>
                             <div id="entropy-container">
-                                <p id="entropy-text"></p>
                                 <p id="entropy-info"></p>
                             </div>
                             <span th:if="${#fields.hasErrors('password')}" class="text-danger"

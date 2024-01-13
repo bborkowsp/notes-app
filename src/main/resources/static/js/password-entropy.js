@@ -11,19 +11,17 @@ function calculateEntropy(password) {
 }
 
 const entropyProgressBar = document.getElementById('entropy-progress-bar');
-const entropyText = document.getElementById('entropy-text');
 const passwordInput = document.getElementById('password');
 const entropyInfo = document.getElementById('entropy-info');
 const entropyContainer = document.getElementById('entropy-container');
 entropyContainer.style.display = 'flex';
 
-if (entropyProgressBar && entropyText && passwordInput && entropyInfo) {
+if (entropyProgressBar && passwordInput && entropyInfo) {
     passwordInput.oninput = function () {
         const password = passwordInput.value;
 
         if (password.length === 0) {
             entropyProgressBar.style.width = '0%';
-            entropyText.innerText = '';
             return;
         }
 
@@ -33,22 +31,17 @@ if (entropyProgressBar && entropyText && passwordInput && entropyInfo) {
 
         const setProgressBarClass = function (className, text) {
             entropyProgressBar.className = 'progress-bar ' + className;
-            entropyText.innerText = text;
             entropyInfo.innerText = 'Entropy: ' + entropy + ' bits';
         };
 
         if (percentage < 25) {
             setProgressBarClass('bg-danger', 'Weak');
-            entropyInfo.style.marginLeft = '27.5rem';
         } else if (percentage < 50) {
             setProgressBarClass('bg-warning', 'Good');
-            entropyInfo.style.marginLeft = '27.5rem';
         } else if (percentage < 75) {
             setProgressBarClass('bg-info', 'Strong');
-            entropyInfo.style.marginLeft = '26.5rem';
         } else {
             setProgressBarClass('bg-success', 'Excellent');
-            entropyInfo.style.marginLeft = '26rem';
         }
     };
 }

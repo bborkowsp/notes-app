@@ -48,7 +48,7 @@ window.onload = function () {
 
 $('#isPublicJs').on('click', function () {
     var cb = $('#isPublicJs').is(':checked');
-    $('#passwordJs').prop('disabled', cb);
+    $('#password').prop('disabled', cb);
 });
 
 
