@@ -1,5 +1,11 @@
 server:
-  port: 8080
+  ssl:
+    key-store: classpath:keystore/notes-app.p12
+    key-store-password: vJC}YQD?Dc!4?GKJ=jt14+%~!Nt!TF_e8x#
+    key-store-type: pkcs12
+    key-alias: notes-app
+    key-password: vJC}YQD?Dc!4?GKJ=jt14+%~!Nt!TF_e8x#
+  port: 443
 
 spring:
   docker:

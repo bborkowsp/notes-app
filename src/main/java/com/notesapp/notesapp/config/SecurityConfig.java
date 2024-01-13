@@ -22,6 +22,8 @@ class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .requiresChannel(requiresChannel -> requiresChannel
+                        .anyRequest().requiresSecure())
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/css/**", "/js/**", "/register", "/qrcode/{username}").permitAll()
                         .anyRequest().authenticated()
