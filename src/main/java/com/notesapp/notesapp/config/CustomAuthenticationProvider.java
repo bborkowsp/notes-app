@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
-import jakarta.annotation.PostConstruct;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,16 +12,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Objects;
 import java.util.Random;
 
-@Component
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -30,16 +25,9 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
     private final UserRepository userRepository;
     private final AuthUseCases authUseCases;
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
 
     private final Cache<String, Integer> failedLoginAttemptsCache;
 
-    @PostConstruct
-    private void init() {
-        setPasswordEncoder(passwordEncoder);
-        setUserDetailsService(userDetailsService);
-    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -96,14 +84,14 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
         try {
             Integer.valueOf(verificationCode);
         } catch (NumberFormatException exception) {
-            throw new BadCredentialsException("Invalid credentials");
+            throw new BadCredentialsException("Bad credentials");
         }
     }
 
     private User getUserFromAuthentication(Authentication authentication) {
         String username = authentication.getName();
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
+                .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
     }
 
     private void incrementFailedLoginAttemptsCount() {
