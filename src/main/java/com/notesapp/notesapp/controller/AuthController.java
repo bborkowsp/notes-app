@@ -2,9 +2,13 @@ package com.notesapp.notesapp.controller;
 
 import com.notesapp.notesapp.dto.RegisterUserDto;
 import com.notesapp.notesapp.service.AuthUseCases;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,10 +23,19 @@ class AuthController {
     private final AuthUseCases authUseCases;
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        String errorMessage = null;
+        if (session != null) {
+            AuthenticationException authenticationException = (AuthenticationException) session
+                    .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+            if (authenticationException != null) {
+                errorMessage = authenticationException.getMessage();
+            }
+        }
+        model.addAttribute("errorMessage", errorMessage);
         return "login";
     }
-
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {

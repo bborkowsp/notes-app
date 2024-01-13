@@ -26,7 +26,7 @@ import java.util.Random;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    private static final int MAX_LOGIN_ATTEMPTS = 10;
 
     private final UserRepository userRepository;
     private final AuthUseCases authUseCases;
@@ -57,8 +57,6 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        System.out.println("additionalAuthenticationChecks function called");
-
         super.additionalAuthenticationChecks(userDetails, authentication);
         validateVerificationCode(authentication);
     }
@@ -111,13 +109,14 @@ class CustomAuthenticationProvider extends DaoAuthenticationProvider {
     private void incrementFailedLoginAttemptsCount() {
         final var request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         final var ipAddress = request.getRemoteAddr();
+        System.out.println("incrementFailedLoginAttemptsCount " + getFailedLoginAttemptsCount());
         final var failedLoginAttemptsCount = getFailedLoginAttemptsCount() + 1;
         failedLoginAttemptsCache.put(ipAddress, failedLoginAttemptsCount);
     }
 
     private void checkIfReachedMaxFailedLoginAttemptsCount() {
         final var unsuccessfulLoginAttempts = getFailedLoginAttemptsCount();
-
+        System.out.println("checkIfReachedMaxFailedLoginAttemptsCount unsuccessfulLoginAttempts: " + unsuccessfulLoginAttempts);
         if (unsuccessfulLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
             throw new BadCredentialsException("You have reached the maximum number of unsuccessful login attempts. Please try again later.");
         }

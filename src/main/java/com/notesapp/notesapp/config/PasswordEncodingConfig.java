@@ -9,8 +9,8 @@ import java.security.SecureRandom;
 
 @Configuration
 class PasswordEncodingConfig {
-    
-    private static final int STRENGTH = 31;
+
+    private static final int STRENGTH = 11;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
