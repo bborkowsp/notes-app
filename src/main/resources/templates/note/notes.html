@@ -25,7 +25,7 @@
                 <a class="btn btn-primary" th:href="@{/notes/edit/{id}(id=${note.noteId})}">Edit</a>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#staticBackdrop" data-note-noteId="${note.noteId}"
-                        th:onclick="'setNoteId(' + ${note.noteId} + '); setTitle(' + ${note.isEncrypted} + ')'">
+                        th:onclick="'setNoteId(' + ${note.noteId} + '); setTitleAndVisibility(' + ${note.isEncrypted} + ')'">
                     <span th:text="${note.isEncrypted ? 'Decrypt' : 'Encrypt'}"></span>
                 </button>
 
@@ -73,7 +73,7 @@
                                     <div class="mb-3">
                                         <input hidden th:field="*{encryptDecryptNoteId}"
                                                id="encryptDecryptId"/>
-                                        <p>Remember, encrypted note will not be visible for other users!</p>
+                                        <p id="progress-bar-body-text"></p>
                                         <label class="form-label">Password:</label>
                                         <td>
                                             <input type="password" th:field="*{password}" class="form-control"
