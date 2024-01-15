@@ -76,7 +76,7 @@ class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authProvider() {
         final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider(userRepository, authUseCases,
-                userDetailsService, passwordEncoder, failedLoginAttemptsCache);
+                failedLoginAttemptsCache);
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
