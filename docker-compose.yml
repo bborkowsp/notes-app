@@ -1,11 +1,25 @@
-version: '3.8'
 services:
-  mysql:
-    image: mysql:latest
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "3306:3306"
+      - '80:80'
+      - '443:443'
+    networks:
+      - default
+    depends_on:
+      - postgres
+  postgres:
+    image: 'postgres:latest'
     environment:
-      MYSQL_ROOT_PASSWORD: WyEBcUPh
-      MYSQL_DATABASE: notes-app
-      MYSQL_USER: notes-app
-      MYSQL_PASSWORD: WyEBcUPh
+      - 'POSTGRES_DB=notes-app'
+      - 'POSTGRES_PASSWORD=2tg7c0VKZcBUcM3zMZ4c'
+      - 'POSTGRES_USER=notes-app'
+    ports:
+      - '5432:5432'
+    networks:
+      - default
+networks:
+  default:
+    driver: bridge

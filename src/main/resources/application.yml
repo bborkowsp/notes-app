@@ -5,19 +5,22 @@ server:
     key-store-type: pkcs12
     key-alias: notes-app
     key-password: vJC}YQD?Dc!4?GKJ=jt14+%~!Nt!TF_e8x#
+    enabled: true
   port: 443
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/notes-app
+    username: notes-app
+    password: 2tg7c0VKZcBUcM3zMZ4c
   docker:
     compose:
       enabled: true
       file: docker-compose.yml
-  datasource:
-    url: jdbc:mysql://localhost:3306/notes-app
-    username: notes-app
-    password: WyEBcUPh
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
