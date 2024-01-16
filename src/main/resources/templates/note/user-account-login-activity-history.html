@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{note/base.html :: head(title='Account activity')}"></head>
+<body>
+<nav th:replace="~{note/base.html :: nav}"></nav>
+<main class="container mt-5">
+    <h1 class="mb-4">Account login activity</h1>
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Login date</th>
+                <th scope="col">IP</th>
+                <th scope="col">Browser</th>
+                <th scope="col">Login result</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="userLoginActivity: ${userLoginActivityHistory}">
+                <td th:text="${userLoginActivity.loginDate}"></td>
+                <td th:text="${userLoginActivity.ipAddress}"></td>
+                <td th:text="${userLoginActivity.userAgent}"></td>
+                <td>
+                    <span th:if="${userLoginActivity.loginResult}">
+                        <i class="fa-solid fa-circle-check" style="color: #1f5129;"></i> Success
+                    </span>
+                    <span th:unless="${userLoginActivity.loginResult}">
+                        <i class="fa-solid fa-ban" style="color: #a72525;"></i> Failed
+                    </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <a class="btn btn-secondary mt-4" th:href="@{/notes}">Return</a>
+</main>
+<th:block th:replace="~{note/base.html :: scripts}"></th:block>
+</body>
+</html>

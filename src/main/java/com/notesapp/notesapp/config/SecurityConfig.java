@@ -1,6 +1,7 @@
 package com.notesapp.notesapp.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import com.notesapp.notesapp.dto.UserLoginActivityDto;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
 import lombok.AccessLevel;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,6 +35,7 @@ class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final Cache<String, Integer> failedLoginAttemptsCache;
+    private final Cache<UserDetails, List<UserLoginActivityDto>> userLoginActivityCache;
 
 
     @Bean
@@ -76,7 +79,7 @@ class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authProvider() {
         final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider(userRepository, authUseCases,
-                failedLoginAttemptsCache);
+                userLoginActivityCache,failedLoginAttemptsCache);
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;

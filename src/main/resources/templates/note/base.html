@@ -47,6 +47,9 @@
             <span class="navbar-text">
                 <i class="fa-solid fa-user"></i> Hello, <span th:text="${#authentication.name}"></span>
             </span>
+                <a class="btn btn-light ms-2" th:href="@{/account-activity}">
+                    <i class="fa-solid fa-shield-halved"></i> Account activity
+                </a>
                 <a class="btn btn-light ms-2" th:href="@{/logout}">
                     <i class="fa-solid fa-right-from-bracket"></i> Logout
                 </a>

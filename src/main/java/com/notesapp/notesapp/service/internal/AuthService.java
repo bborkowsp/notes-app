@@ -1,6 +1,8 @@
 package com.notesapp.notesapp.service.internal;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.notesapp.notesapp.dto.RegisterUserDto;
+import com.notesapp.notesapp.dto.UserLoginActivityDto;
 import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.repository.UserRepository;
 import com.notesapp.notesapp.service.AuthUseCases;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -23,6 +27,8 @@ class AuthService implements AuthUseCases, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final GoogleAuthUseCases googleAuthUseCases;
+    private final Cache<UserDetails, List<UserLoginActivityDto>> userLoginActivityCache;
+
 
     @Override
     public void register(RegisterUserDto registerUserDto) {
@@ -44,6 +50,11 @@ class AuthService implements AuthUseCases, UserDetailsService {
         if (!googleAuthUseCases.validateCode(username, verificationCode)) {
             throw new IllegalStateException("Invalid login credentials");
         }
+    }
+
+    @Override
+    public List<UserLoginActivityDto> getUserAccountLoginActivityHistory(User user) {
+        return userLoginActivityCache.get(user, key -> List.of()).reversed();
     }
 
     private void checkIfUserAlreadyExists(String username, String email) {

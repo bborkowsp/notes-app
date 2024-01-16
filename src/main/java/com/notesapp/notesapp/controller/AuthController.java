@@ -1,6 +1,7 @@
 package com.notesapp.notesapp.controller;
 
 import com.notesapp.notesapp.dto.RegisterUserDto;
+import com.notesapp.notesapp.model.User;
 import com.notesapp.notesapp.service.AuthUseCases;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,6 +57,12 @@ class AuthController {
         } catch (IllegalStateException exception) {
             return handleFailedRegistration(model, exception);
         }
+    }
+
+    @GetMapping("/account-activity")
+    String showLastSuccessfulLoginsPage(Model model, @AuthenticationPrincipal User user) {
+        model.addAttribute("userLoginActivityHistory", authUseCases.getUserAccountLoginActivityHistory(user));
+        return "note/user-account-login-activity-history";
     }
 
     private String handleRegistrationErrors(RegisterUserDto registerUserDto, Model model) {
