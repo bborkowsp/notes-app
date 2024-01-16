@@ -1,6 +1,5 @@
-FROM eclipse-temurin:21-jdk
-RUN apt-get update && apt-get install -y maven
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 COPY . .
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 ENTRYPOINT ["java", "-Dspring.profiles.active=production", "-jar", "/app/target/notes-app-0.0.1-SNAPSHOT.jar"]
