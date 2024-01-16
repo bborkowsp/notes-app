@@ -14,8 +14,8 @@ public record UpdateNoteDto(
         @Size(max = 5000, message = "Content is too long")
         String content,
 
-        @Size(min = MIN_PASSWORD_LENGTH, max = MAX_PASSWORD_LENGTH,
-                message = "Password must be between " + MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " characters")
+        @Size( max = MAX_PASSWORD_LENGTH,
+                message = "Password must not have more than " + MAX_PASSWORD_LENGTH + " characters")
         String password,
 
         Boolean isPublic

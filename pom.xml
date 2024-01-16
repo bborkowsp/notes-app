@@ -15,7 +15,6 @@
     <description>notes-app</description>
     <properties>
         <java.version>17</java.version>
-        <jjwt.version>0.12.3</jjwt.version>
         <zxing.version>3.5.2</zxing.version>
         <passay.version>1.6.4</passay.version>
         <caffeine.version>3.1.8</caffeine.version>
@@ -71,23 +70,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jjwt.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-jackson</artifactId>
-            <version>${jjwt.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.warrenstrange</groupId>
