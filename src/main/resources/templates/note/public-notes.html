@@ -82,6 +82,8 @@
                                                 <div class="progress-bar" role="progressbar"
                                                      id="entropy-progress-bar"></div>
                                             </div>
+                                            <span th:if="${#fields.hasErrors('password')}" class="text-danger"
+                                                  th:errors="*{password}">Password Error</span>
                                         </td>
                                         <div id="entropy-container">
                                             <p id="entropy-info"></p>

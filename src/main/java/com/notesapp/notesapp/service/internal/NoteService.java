@@ -15,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
-import static com.notesapp.notesapp.validation.ValidPassword.MIN_PASSWORD_LENGTH;
-
 @Service
 @Transactional
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -85,7 +82,6 @@ class NoteService implements NoteUseCases {
 
     @Override
     public void encryptOrDecrypt(EncryptDecryptNoteDto encryptDecryptNoteDto, User user) throws Exception {
-        validatePasswordLength(encryptDecryptNoteDto.password());
         final var note = noteRepository.findById(encryptDecryptNoteDto.encryptDecryptNoteId()).orElseThrow();
         validateUserIsNoteAuthor(user, note);
         final var password = sanitizeHtml(encryptDecryptNoteDto.password());
@@ -109,12 +105,6 @@ class NoteService implements NoteUseCases {
     private void validateNoteIsNotEncrypted(Note note) {
         if (note.getIsEncrypted()) {
             throw new IllegalArgumentException("Cannot edit encrypted note");
-        }
-    }
-
-    private void validatePasswordLength(String password) {
-        if (password.length() > MAX_PASSWORD_LENGTH || password.length() < MIN_PASSWORD_LENGTH) {
-            throw new IllegalArgumentException("Password must be between " + MIN_PASSWORD_LENGTH + " and " + MAX_PASSWORD_LENGTH + " characters long");
         }
     }
 

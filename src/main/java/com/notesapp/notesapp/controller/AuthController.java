@@ -50,7 +50,6 @@ class AuthController {
         if (bindingResult.hasErrors()) {
             return handleRegistrationErrors(registerUserDto, model);
         }
-
         try {
             authUseCases.register(registerUserDto);
             return handleSuccessfulRegistration(registerUserDto, redirectAttributes);

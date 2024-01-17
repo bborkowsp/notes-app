@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import static com.notesapp.notesapp.validation.ValidPassword.MAX_PASSWORD_LENGTH;
-import static com.notesapp.notesapp.validation.ValidPassword.MIN_PASSWORD_LENGTH;
 
 public record UpdateNoteDto(
         @NotBlank(message = "Title cannot be blank")
@@ -14,7 +13,7 @@ public record UpdateNoteDto(
         @Size(max = 5000, message = "Content is too long")
         String content,
 
-        @Size( max = MAX_PASSWORD_LENGTH,
+        @Size(max = MAX_PASSWORD_LENGTH,
                 message = "Password must not have more than " + MAX_PASSWORD_LENGTH + " characters")
         String password,
 

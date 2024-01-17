@@ -48,12 +48,25 @@ class NoteController {
     }
 
     @PostMapping("/encrypt-decrypt")
-    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
+    String encryptOrDecryptNote(@Valid EncryptDecryptNoteDto encryptDecryptNoteDto, BindingResult bindingResult, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
+        if (bindingResult.hasErrors()) {
+            return handleEncryptDecryptBindingError(model, request.getHeader("Referer"));
+        }
         try {
             noteUseCases.encryptOrDecrypt(encryptDecryptNoteDto, user);
             return handleEncryptDecryptSuccess(request.getHeader("Referer"));
         } catch (Exception exception) {
             return handleEncryptDecryptError(model, exception, request.getHeader("Referer"));
+        }
+    }
+
+    @GetMapping("/delete/{id}")
+    String deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
+        try {
+            noteUseCases.deleteNote(id, user);
+            return handleNoteDeleteSuccess(request.getHeader("Referer"));
+        } catch (Exception exception) {
+            return handleNoteDeleteError(model, exception, request.getHeader("Referer"));
         }
     }
 
@@ -76,16 +89,6 @@ class NoteController {
         return "redirect:/notes/my-notes";
     }
 
-
-    @GetMapping("/delete/{id}")
-    String deleteNote(@PathVariable Long id, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
-        try {
-            noteUseCases.deleteNote(id, user);
-            return handleNoteDeleteSuccess(request.getHeader("Referer"));
-        } catch (Exception exception) {
-            return handleNoteDeleteError(model, exception, request.getHeader("Referer"));
-        }
-    }
 
     @GetMapping("/edit/{id}")
     public String showEditPage(@PathVariable Long id, @AuthenticationPrincipal User user, Model model, HttpServletRequest request) {
@@ -119,6 +122,12 @@ class NoteController {
     private String handleEncryptDecryptError(Model model, Exception exception, String referer) {
         model.addAttribute("error", exception.getMessage());
         return referer.contains("/notes/my-notes") ? "redirect:/notes/my-notes?error=" + exception.getMessage() : "redirect:/notes/public-notes?error=" + exception.getMessage();
+    }
+
+    private String handleEncryptDecryptBindingError(Model model, String referer) {
+        final var errorMessage = "Password must not be blank and must not have more than 128 characters";
+        model.addAttribute("error", errorMessage);
+        return referer.contains("/notes/my-notes") ? "redirect:/notes/my-notes?error=" + errorMessage : "redirect:/notes/public-notes?error=" + errorMessage;
     }
 
     private String handleNotesError(Model model, IllegalArgumentException exception) {
